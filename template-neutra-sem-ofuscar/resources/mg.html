@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Geral - Windows 11</title>
+    <link rel="stylesheet" href="css/mg.css">
+    <script src="neutralino.js"></script>
+</head>
+<body>
+
+<div id="player">
+    <div id="conteudo-animado" style="height: 100%; display: flex; flex-direction: row; padding-bottom: 70px;">
+        
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>Conteúdo do Curso</h2>
+            </div>
+            <div id="menu-aulas-container" class="menu-scroll"></div>
+        </div>
+
+        <div class="main-content" style="display: flex; flex-direction: column; justify-content: center; padding: 60px;">
+            <div class="header-boas-vindas" style="margin-bottom: 40px;">
+                <h1 style="font-size: 2.6em; color: #222; margin: 0 0 10px 0; font-weight: 300;">Olá, <span id="nome-aluno">Fernando</span>! 👋</h1>
+                <p style="font-size: 1.2em; color: #666; margin: 0;">Que bom ter você de volta para continuar seus estudos.</p>
+            </div>
+            
+            <div id="resume-card" class="resume-card" style="background: #f8f9fa; padding: 40px; border-radius: 12px; border-left: 6px solid #0078d7; box-shadow: 0 8px 25px rgba(0,0,0,0.05); max-width: 650px; transition: all 0.3s ease;">
+                <p id="label-etapa" style="color: #888; font-size: 0.9em; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 15px; font-weight: 600;">Sua próxima etapa</p>
+                
+                <h2 id="aula-atual-titulo" style="margin: 0 0 10px 0; color: #222; font-size: 1.8em;">Carregando...</h2>
+                <h3 id="topico-atual-titulo" style="margin: 0 0 30px 0; color: #0078d7; font-weight: normal; font-size: 1.3em;">Aguarde um momento</h3>
+
+                <button id="btn-acao-principal" style="background: #0078d7; color: white; border: none; padding: 16px 32px; font-size: 1.1em; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 12px; font-weight: 600;">
+                    <span id="btn-icon-container">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                    </span>
+                    <span id="btn-texto-principal">Continuar Estudando</span>
+                </button>
+            </div>
+        </div>
+    </div> 
+
+    <div class="bottom-bar">
+        <div class="left-controls">
+            <button id="btnSair" title="Sair do Curso">
+                <svg viewBox="0 0 24 24" fill="currentColor" style="width:24px; height:24px;"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+            </button>
+            <div class="info-text"><span id="course-name">WINDOWS 11</span></div>
+        </div>
+    </div>
+</div> 
+<script src="mg.js"></script>
+</body>
+</html>

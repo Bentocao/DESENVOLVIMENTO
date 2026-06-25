@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/interacao.css">
+</head>
+<body>
+<div id="palco">
+    <div id="caixa-instrucao">
+        <div id="conteudo-texto"></div>
+        <div class="divisor"></div>
+        <div class="rodape-caixa">
+            <button id="meu-btn-ajuda" class="btn-ajuda" onclick="mostrarAjuda()">AJUDA (?)</button>
+            <button id="meu-btn-next" class="btn-avancar" onclick="proximoPasso()" style="display:none">CONCLUIR E AVANÇAR ➔</button>
+        </div>
+    </div>
+    
+    <img id="fundo" class="imagem-camada">
+    <img id="brilho" class="imagem-camada" style="opacity: 0;">
+    
+    <div id="camada-interativa">
+        <div id="seta-ajuda"></div> 
+        <div id="hotspot"></div>
+    </div>
+</div>
+
+<audio id="audio-interacao"></audio>
+
+<script src="intera-01-01.js"></script>
+
+<script>
+ // --- CHAVE GERAL LIGA/DESLIGA ---
+const MODO_AJUSTE = false; 
+
+if (MODO_AJUSTE) {
+    window.addEventListener('load', () => {
+        // Usamos o ID 'hotspot' que é o que está no seu HTML
+        const btn = document.getElementById('hotspot'); 
+        if (btn) {
+            btn.style.backgroundColor = "rgba(255, 0, 0, 0.5)"; 
+            btn.style.border = "2px solid red";
+            btn.style.display = "block"; 
+            // Garante que o modo edição funcione mesmo se o JS mudar o display depois
+            btn.classList.add("modo-edicao"); 
+        }
+    });
+}
+
+    // --- VARIÁVEIS RESTAURADAS AQUI --- (Não as deixe fugir!)
+    let atual = 0;
+    const imgFundo = document.getElementById('fundo');
+    const imgBrilho = document.getElementById('brilho');
+    const btnHotspot = document.getElementById('hotspot');
+    const displayTexto = document.getElementById('conteudo-texto');
+    const caixa = document.getElementById('caixa-instrucao');
+    const btnAjudaUI = document.getElementById('meu-btn-ajuda');
+    const btnNextUI = document.getElementById('meu-btn-next');
+    const seta = document.getElementById('seta-ajuda');
+    const audioEl = document.getElementById('audio-interacao');
+    // ----------------------------------
+
+    function renderizar() {
+        if (typeof passosInteracao === 'undefined') {
+            console.error("Erro: arquivo JS não carregou.");
+            return;
+        }
+
+        const dados = passosInteracao[atual];
+        seta.classList.remove('animar-seta'); 
+        
+        imgFundo.src = "imgs/" + dados.img;
+        
+        if (dados.audio && dados.audio !== "") {
+            audioEl.src = dados.audio;
+            audioEl.play().catch(e => console.log("Áudio bloqueado."));
+        } else {
+            audioEl.pause();
+        }
+        
+        if (dados.tipo === "clique") {
+            caixa.style.display = "block";
+            btnNextUI.style.display = "none";
+            btnAjudaUI.style.display = "block";
+            
+            imgBrilho.src = "imgs/" + dados.hover;
+            imgBrilho.style.opacity = "0";
+            
+            btnHotspot.style.display = "block";
+            btnHotspot.style.left = dados.x + "%"; 
+            btnHotspot.style.top = dados.y + "%";
+            btnHotspot.style.width = dados.w + "%"; 
+            btnHotspot.style.height = dados.h + "%";
+            
+            // --- A MÁGICA DO MODO DE EDIÇÃO ACONTECE AQUI ---
+            if (MODO_AJUSTE) {
+                btnHotspot.classList.add("modo-edicao");
+            } else {
+                btnHotspot.classList.remove("modo-edicao");
+            }
+            // ------------------------------------------------
+
+            displayTexto.innerHTML = dados.text;
+        } 
+        else if (dados.tipo === "auto") {
+            caixa.style.display = "none";
+            btnHotspot.style.display = "none";
+            imgBrilho.style.opacity = "0";
+            
+            setTimeout(() => {
+                atual++;
+                renderizar();
+            }, dados.tempo);
+        } 
+        else if (dados.tipo === "final") {
+            caixa.style.display = "block";
+            btnHotspot.style.display = "none";
+            btnAjudaUI.style.display = "none";
+            btnNextUI.style.display = "block";
+            displayTexto.innerHTML = dados.text;
+        }
+    }
+
+    let helperInterval = null; // Crie essa variável fora da função para controlar o tempo
+
+function mostrarAjuda() {
+    const dados = passosInteracao[atual];
+    if(dados.tipo === "clique") {
+        // 1. Limpa qualquer pisca-pisca que já esteja rodando antes
+        clearInterval(helperInterval);
+        
+        // 2. Posiciona a seta
+        seta.style.left = (dados.x + (dados.w / 2) - 1.5) + "%"; 
+        seta.style.top = (dados.y - 7) + "%"; 
+        
+        // 3. Garante que a classe CSS intrusa está fora da jogada
+        seta.classList.remove('animar-seta');
+        
+        // 4. Inicia o pisca-pisca manual (Muda o estado a cada 250 milissegundos)
+        seta.style.display = 'block';
+        let piscadas = 0;
+        
+        console.log("[JS-PISCAR] Iniciando pisca-pisca manual na marra...");
+        
+        helperInterval = setInterval(() => {
+            // Inverte o display atual: se tá block vira none, se tá none vira block
+            if (seta.style.display === 'block') {
+                seta.style.display = 'none';
+            } else {
+                seta.style.display = 'block';
+            }
+            
+            piscadas++;
+            
+            // 10 mudanças de estado = piscar 5 vezes aceso e 5 vezes apagado
+            if (piscadas >= 10) {
+                clearInterval(helperInterval);
+                seta.style.display = 'none'; // Garante que termina APAGADA!
+                console.log("[JS-PISCAR] Fim do tempo. Seta apagada com sucesso.");
+            }
+        }, 250); // Velocidade da piscada
+    }
+}
+
+    function proximoPasso() {
+    console.log("[INTERAÇÃO] Botão Concluir clicado.");
+    
+    // 1. Pega o parâmetro da URL
+    const params = new URLSearchParams(window.location.search);
+    
+    // 🎯 A CORREÇÃO: o parseInt força o JavaScript a ler como NÚMERO (Ex: "24" vira 24 de verdade)
+    const slideOrigem = parseInt(params.get('slide')) || 0;
+    
+    // 2. Agora a matemática funciona: 24 + 1 = 25
+    const proximoSlide = slideOrigem + 1; 
+    
+    console.log("[INTERAÇÃO] Enviando comando para o pai ir para o índice calculado: " + proximoSlide);
+
+    if (window.parent && typeof window.parent.avancarSlidePelaInteracao === 'function') {
+        window.parent.avancarSlidePelaInteracao(proximoSlide);
+    } else {
+        console.error("Erro: A função avancarSlidePelaInteracao não foi encontrada no pai.");
+    }
+}
+	
+	
+
+    btnHotspot.onclick = () => { 
+        if (passosInteracao[atual].tipo === "clique") {
+            atual++; 
+            renderizar(); 
+        }
+    };
+
+    btnHotspot.onmouseenter = () => { 
+        if(passosInteracao[atual].tipo === "clique") imgBrilho.style.opacity = "1"; 
+    };
+    
+    btnHotspot.onmouseleave = () => { 
+        imgBrilho.style.opacity = "0"; 
+    };
+
+    window.onload = renderizar;
+</script>
+</body>
+</html>

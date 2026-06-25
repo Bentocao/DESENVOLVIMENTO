@@ -1,0 +1,52 @@
+{
+  "$schema": "https://raw.githubusercontent.com/neutralinojs/neutralinojs/main/schemas/neutralino.config.schema.json",
+  "applicationId": "js.cpw.logcpw",
+  "version": "1.0.0",
+  "defaultMode": "window",
+  "port": 0,
+  "documentRoot": "/resources/",
+  "url": "/logcpw.html",
+  "enableServer": true,
+  "enableNativeAPI": true,
+  "logging": {
+    "enabled": true,
+    "writeToLogFile": true
+  },
+  "nativeAllowList": [
+    "app.*",
+    "os.*",
+    "window.*",
+    "events.*",
+    "filesystem.*",
+    "debug.log"
+  ],
+  "app": {
+    "singleInstance": true,
+    "url": "/logcpw.html",
+    "exitOnClose": false
+  },
+  "modes": {
+    "window": {
+      "title": "CPW - Portal do Aluno",
+      "width": 1300,
+      "height": 950,
+      "minWidth": 1024,
+      "minHeight": 768,
+      "fullScreen": false,
+      "maximize": true,
+      "resizable": false,
+      "center": true,
+      "enableInspector": true,
+      "borderless": true,
+      "exitProcessOnClose": false
+    }
+  },
+  "cli": {
+    "enable": true,
+    "binaryName": "logcpw",
+    "resourcesPath": "/resources/",
+    "clientLibrary": "/resources/neutralino.js",
+    "binaryVersion": "5.5.0",
+    "clientVersion": "5.5.0"
+  }
+}

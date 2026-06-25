@@ -1,0 +1,3 @@
+database - cpw2026
+usuário - cpw
+senha - gws141331@

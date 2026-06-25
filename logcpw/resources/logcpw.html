@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal do Aluno</title>
+    <link rel="stylesheet" href="css/logcpw.css">
+</head>
+<body>
+
+    <button class="btn-fechar-app" onclick="encerrarAplicativo()" title="Fechar Aplicativo">✕</button>
+
+    <div id="player">
+        <div id="conteudo-animado" class="layout-portal">
+            
+            <div class="sidebar" id="painel-login">
+                <div class="sidebar-header">
+                    <h2>Portal do Aluno</h2>
+                </div>
+                
+                <div id="login-container" class="login-form">
+                    <p>Insira suas credenciais para acessar seus cursos:</p>
+                    <input type="text" id="usuario" placeholder="Usuário">
+                    <input type="password" id="senha" placeholder="Senha">
+                    <button onclick="fazerLogin()" class="btn-login">Entrar</button>
+                    <div id="mensagem-erro" class="msg-erro"></div>
+                </div>
+            </div>
+
+            <div class="main-content" id="area-principal">
+                
+                <div id="boas-vindas-inicial" class="tela-boas-vindas">
+                    <h1>Bem-vindo ao CPW</h1>
+                    <p>Faça o login ao lado para carregar sua jornada de aprendizado.</p>
+                </div>
+                
+                <div id="dashboard-aluno" class="dashboard-oculto" style="width: 100%;">
+                    <div id="grid-cursos" class="container-cards"></div>
+                    <div id="controles-paginacao" class="paginacao"></div>
+                </div>
+                
+            </div> 
+        </div> 
+    </div> 
+    <script src="neutralino.js"></script>
+    <script src="manutencao.js"></script>
+    <script src="logcpw.js"></script>
+    
+        
+</body>
+</html>

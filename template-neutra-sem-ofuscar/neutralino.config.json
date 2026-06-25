@@ -1,0 +1,36 @@
+{
+  "$schema": "https://raw.githubusercontent.com/neutralinojs/neutralinojs/main/schemas/neutralino.config.schema.json",
+  "applicationId": "js.cpw.win11",
+  "version": "1.0.0",
+  "defaultMode": "window",
+  "port": 0,
+  "documentRoot": "/resources/",
+  "url": "/mg.html",
+  "enableServer": true,
+  "enableNativeAPI": true,
+  "nativeAllowList": [
+    "app.*",
+    "os.*",
+    "window.*",
+    "events.*",
+    "filesystem.*"
+  ],
+  "modes": {
+    "window": {
+      "title": "Curso Interativo de Windows 11",
+      "fullScreen": false, 
+      "maximize": true,
+      "enableInspector": false,
+      "borderless": false,
+      "resizable": false,
+      "center": true
+    }
+  },
+  "cli": {
+    "binaryName": "win11",
+    "resourcesPath": "/resources/", 
+    "clientLibrary": "/resources/neutralino.js",
+    "binaryVersion": "5.5.0",
+    "clientVersion": "5.5.0"
+  }
+}

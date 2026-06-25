@@ -1,0 +1,350 @@
+/* =======================================================
+   0. RESET (O SEGREDO PARA NADA VAZAR DA TELA)
+======================================================= */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* =======================================================
+   1. FUNDO E ALINHAMENTO
+======================================================= */
+html, body {
+    width: 100%; 
+    height: 100%; 
+    overflow: hidden; 
+}
+
+body {
+    background: linear-gradient(to top, #e0e0e0 0%, #ffffff 100%);
+    background-attachment: fixed;
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* =======================================================
+   2. PLAYER E BARRA LATERAL (ESQUERDA)
+======================================================= */
+#player {
+    width: 1200px; 
+    max-width: 95vw; 
+    height: 95vh;
+    background-color: #ffffff; 
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
+    display: flex; 
+    flex-direction: column; 
+    overflow: hidden;
+    border: 1px solid #dcdcdc; 
+    position: relative; 
+}
+
+.layout-portal {
+    width: 100%; 
+    height: 100%; 
+    display: flex; 
+    flex-direction: row;
+}
+
+.sidebar {
+    width: 350px; 
+    background-color: #f4f6f8; 
+    border-right: 1px solid #e1e4e8; 
+    flex-shrink: 0;
+    display: flex; 
+    flex-direction: column;
+}
+
+.sidebar-header { 
+    padding: 20px; 
+    border-bottom: 1px solid #eee; 
+    text-align: center; 
+}
+
+.sidebar-header h2 { 
+    color: #333; 
+    font-size: 1.5em; 
+}
+
+.login-form { 
+    padding: 30px 20px; 
+    margin-top: 40px; /* Ajuste que você pediu para descer os campos */
+    display: flex; 
+    flex-direction: column; 
+    gap: 15px; 
+}
+
+.login-form input { 
+    padding: 14px; 
+    border: 1px solid #ccc; 
+    border-radius: 6px; 
+    outline: none; 
+}
+
+.btn-login {
+    background: #0078d7; 
+    color: white; 
+    border: none; 
+    padding: 14px;
+    border-radius: 6px; 
+    font-size: 1.1em; 
+    font-weight: bold; 
+    cursor: pointer;
+}
+
+.msg-erro { 
+    color: red; 
+    text-align: center; 
+    font-weight: bold; 
+    margin-top: 5px; 
+}
+
+/* =======================================================
+   3. ÁREA PRINCIPAL E DASHBOARD (DIREITA)
+======================================================= */
+.main-content {
+    background-color: #ffffff; 
+    flex: 1; 
+    display: flex;
+    flex-direction: column; 
+    justify-content: flex-start; 
+    align-items: center;
+    padding: 30px 40px; 
+    height: 100%; 
+    overflow: hidden;
+}
+
+.tela-boas-vindas { 
+    margin: auto; 
+    text-align: center; 
+}
+
+.tela-boas-vindas h1 { font-size: 2.8em; color: #222; font-weight: 300; margin-bottom: 10px; }
+.tela-boas-vindas p { font-size: 1.2em; color: #666; }
+
+.dashboard-oculto { 
+    display: none !important; 
+}
+
+.dashboard-visivel {
+    display: flex !important;
+    flex-direction: column;
+    width: 100%; 
+    height: 100%;
+}
+
+/* =========================================
+   4. GRID FLEXÍVEL E PAGINAÇÃO (LAYOUT MATEMÁTICO)
+   ========================================= */
+.container-cards {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    /* Divide o espaço em duas metades iguais e flexíveis (1fr) */
+    grid-template-rows: 1fr 1fr; 
+    gap: 15px; 
+    width: 100%;
+    flex: 1; /* Ocupa todo o espaço que sobrar na tela */
+    min-height: 0; /* Impede que o grid transborde a tela */
+}
+
+.paginacao {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    height: 60px; /* Trava o espaço do rodapé */
+    margin-top: 15px; 
+    flex-shrink: 0; /* Proíbe o navegador de engolir os botões */
+}
+
+/* =========================================
+   5. COMPONENTES (CARDS E ITENS)
+   ========================================= */
+.card-curso {
+    background-color: #ffffff; 
+    border-radius: 10px; 
+    border: 1px solid #e1e4e8;
+    display: flex; 
+    flex-direction: column; 
+    height: 100%; /* Respeita o tamanho que o Grid der para ele */
+    overflow: hidden; 
+    cursor: pointer; 
+    position: relative;
+    transition: transform 0.2s;
+}
+
+.card-curso:hover { transform: translateY(-5px); }
+
+.card-imagem { 
+    height: 55%; 
+    background-color: #e9ecef; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+}
+
+.card-info { 
+    padding: 10px 15px; 
+    height: 45%; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+}
+
+.curso-titulo { 
+    font-size: 0.9em; 
+    font-weight: bold; 
+    color: #333; 
+    line-height: 1.2; 
+    margin-bottom: 5px; 
+}
+
+.pag-item {
+    padding: 8px 16px;
+    border: 1px solid #0078d7;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #0078d7;
+    font-weight: bold;
+    background: white;
+    transition: all 0.2s;
+}
+
+.pag-item.active {
+    background-color: #0078d7;
+    color: white;
+}
+
+.pag-item:hover:not(.active) {
+    background-color: #f0f7ff;
+}
+
+/* STATUS */
+.status-ativo { border: 2px solid #0078d7; }
+.status-concluido { border-bottom: 4px solid #28a745; }
+.status-pendente { border: 1px solid #ddd; }
+.selo-ok { position: absolute; top: 10px; right: 10px; }
+
+
+/* =========================================================
+   ESTILOS DO PAINEL LATERAL (DESTAQUE)
+   ========================================================= */
+.destaque-lateral {
+    text-align: center;
+    margin-top: 70px;
+}
+
+.destaque-cabecalho {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e1e4e8;
+    text-align: left;
+    padding-left: 10%;
+}
+
+.destaque-cabecalho h3 {
+    color: #333;
+    margin: 0 0 5px 0;
+    font-size: 1.5em;
+}
+
+.destaque-cabecalho p {
+    color: #666;
+    font-size: 0.95em;
+    margin: 0;
+}
+
+.destaque-cabecalho p b {
+    color: #0078d7;
+}
+
+.destaque-subtitulo {
+    color: #666;
+    font-size: 1em;
+    margin-bottom: 5px;
+}
+
+.destaque-curso-titulo {
+    color: #0078d7;
+    margin-bottom: 25px;
+    font-size: 1.6em;
+}
+
+.destaque-progresso-container {
+    width: 80%;
+    margin: 0 auto 25px auto;
+    text-align: left;
+}
+
+.destaque-progresso-texto {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85em;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+.destaque-porcentagem {
+    font-weight: bold;
+    color: #28a745;
+}
+
+.destaque-barra-fundo {
+    width: 100%;
+    height: 10px;
+    background-color: #e1e4e8;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.destaque-barra-preenchimento {
+    height: 100%;
+    background-color: #28a745;
+}
+
+/* Aproveita a classe .btn-login que você já tem, mas com regras específicas para o painel */
+.btn-acessar-curso {
+    background-color: #28a745;
+    width: 80%;
+    margin: 0 auto;
+    display: block;
+}
+
+.btn-acessar-curso:hover {
+    background-color: #218838; /* Um tom mais escuro para o hover ficar legal */
+}
+
+.msg-erro-acesso {
+    color: #d93025;
+    font-size: 0.85em;
+    margin-top: 10px;
+    display: none;
+    font-weight: bold;
+}
+
+
+/* =========================================
+   BOTÃO DE SAÍDA NATIVO
+========================================= */
+.btn-fechar-app {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: transparent;
+    border: none;
+    color: #888;
+    font-size: 20px;
+    cursor: pointer;
+    font-family: sans-serif;
+    font-weight: bold;
+    padding: 5px 10px;
+    transition: color 0.2s ease-in-out;
+}
+
+.btn-fechar-app:hover {
+    color: #d93025; /* Fica vermelho ao passar o mouse */
+}

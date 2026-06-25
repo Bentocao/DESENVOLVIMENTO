@@ -1,0 +1,22 @@
+# OS files
+desktop.ini
+.DS_Store
+Thumbs.db
+
+# Dependencies
+**/node_modules/
+
+# Logs
+**/*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime/env
+.env
+.env.*
+
+# Build/cache
+**/dist/
+**/build/
+**/.cache/

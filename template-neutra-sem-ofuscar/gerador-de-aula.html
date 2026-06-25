@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Extrator de Coordenadas Master</title>
+    <style>
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #111; overflow: hidden; font-family: sans-serif; }
+        #viewport { position: relative; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; }
+        .tela { position: absolute; max-width: 100%; max-height: 100%; object-fit: contain; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; }
+        #img-fundo { z-index: 1; }
+        #img-hover { z-index: 2; opacity: 0; }
+        #hotspot { position: absolute; cursor: move; z-index: 100; background: rgba(0, 255, 255, 0.4); border: 2px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        #painel { position: fixed; top: 10px; left: 10px; background: rgba(0,0,0,0.9); color: #0f0; padding: 15px; z-index: 1000; border: 1px solid #0f0; border-radius: 8px; pointer-events: none; }
+        #log-final { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; display: none; z-index: 2000; width: 80%; height: 70%; overflow-y: scroll; border: 5px solid #0f0; }
+    </style>
+</head>
+<body>
+
+<div id="painel">
+    <strong>MODO DESIGNER</strong><br>
+    Passo Atual: <span id="txt-passo">1</span><br>
+    Imagens: <span id="txt-imgs">1 e 2</span><br><br>
+    X: <span id="out-x">50</span>% | Y: <span id="out-y">50</span>%<br>
+    W: <span id="out-w">5</span>% | H: <span id="out-h">5</span>%<br><br>
+    <small>
+        - Arraste o botão azul<br>
+        - Scroll: muda tamanho<br>
+        - <strong>Clique Simples: Confirma e Próximo</strong>
+    </small>
+</div>
+
+<div id="log-final">
+    <h3>Coordenadas Extraídas!</h3>
+    <p>Copie o texto abaixo e cole no chat para o Gemini:</p>
+    <textarea id="resultado" style="width: 100%; height: 300px; font-family: monospace;"></textarea>
+    <button onclick="location.reload()">Recomeçar</button>
+</div>
+
+<div id="viewport">
+    <img id="img-fundo" class="tela" src="intera-01-01/imgs/1.png">
+    <img id="img-hover" class="tela" src="intera-01-01/imgs/2.png">
+    <div id="hotspot" style="width: 5%; height: 5%; top: 50%; left: 50%;"></div>
+</div>
+
+<script>
+    let imgIndex = 1;
+    let passo = 1;
+    let coordenadasFinais = [];
+    
+    // Configuração do botão atual
+    let btn = { x: 50, y: 50, w: 5, h: 5 };
+    
+    const hotspot = document.getElementById('hotspot');
+    const imgFundo = document.getElementById('img-fundo');
+    const imgHover = document.getElementById('img-hover');
+    
+    function atualizarVisual() {
+        hotspot.style.left = btn.x + "%";
+        hotspot.style.top = btn.y + "%";
+        hotspot.style.width = btn.w + "%";
+        hotspot.style.height = btn.h + "%";
+        
+        document.getElementById('out-x').innerText = btn.x.toFixed(1);
+        document.getElementById('out-y').innerText = btn.y.toFixed(1);
+        document.getElementById('out-w').innerText = btn.w.toFixed(1);
+        document.getElementById('out-h').innerText = btn.h.toFixed(1);
+    }
+
+    // Movimentação
+    let arrastando = false;
+    hotspot.onmousedown = () => { arrastando = true; };
+    window.onmouseup = () => { arrastando = false; };
+    window.onmousemove = (e) => {
+        if (!arrastando) return;
+        btn.x = (e.clientX / window.innerWidth) * 100 - (btn.w / 2);
+        btn.y = (e.clientY / window.innerHeight) * 100 - (btn.h / 2);
+        atualizarVisual();
+    };
+
+    // Tamanho no Scroll
+    window.onwheel = (e) => {
+        if (e.deltaY < 0) { btn.w += 0.2; btn.h += 0.2; }
+        else { btn.w -= 0.2; btn.h -= 0.2; }
+        atualizarVisual();
+    };
+
+    // Hover (Teste real)
+    hotspot.onmouseenter = () => { if(!arrastando) imgHover.style.opacity = "1"; };
+    hotspot.onmouseleave = () => { if(!arrastando) imgHover.style.opacity = "0"; };
+
+    // Clique - SALVA E PULA PRO PRÓXIMO
+    hotspot.onclick = () => {
+        // Salva o passo atual
+        coordenadasFinais.push({
+            passo: passo,
+            imagem_fundo: imgIndex + ".png",
+            imagem_hover: (imgIndex + 1) + ".png",
+            x: btn.x.toFixed(1),
+            y: btn.y.toFixed(1),
+            w: btn.w.toFixed(1),
+            h: btn.h.toFixed(1)
+        });
+
+        // Tenta carregar o próximo par de imagens
+        imgIndex += 2;
+        passo++;
+        
+        let testeImg = new Image();
+        testeImg.src = `intera-01-01/imgs/${imgIndex}.png`;
+        
+        testeImg.onload = () => {
+            imgFundo.src = `intera-01-01/imgs/${imgIndex}.png`;
+            imgHover.src = `intera-01-01/imgs/${imgIndex + 1}.png`;
+            imgHover.style.opacity = "0";
+            document.getElementById('txt-passo').innerText = passo;
+            document.getElementById('txt-imgs').innerText = `${imgIndex} e ${imgIndex+1}`;
+            // Reseta posição para o centro para facilitar novo ajuste
+            btn.x = 45; btn.y = 45;
+            atualizarVisual();
+        };
+
+        testeImg.onerror = () => {
+            // Se não houver mais imagens, encerra e mostra o código
+            document.getElementById('log-final').style.display = "block";
+            document.getElementById('resultado').value = JSON.stringify(coordenadasFinais, null, 2);
+        };
+    };
+
+    atualizarVisual();
+</script>
+</body>
+</html>

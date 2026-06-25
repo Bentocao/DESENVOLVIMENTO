@@ -1,0 +1,137 @@
+/* apresentacao.css - VERSÃO FINAL REVISADA */
+
+/* 1. RESET E BASE */
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+}
+
+body, html { 
+    width: 100%; 
+    height: 100%; 
+    background-color: #000; 
+    overflow: hidden; 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+}
+
+/* 2. PALCO PRINCIPAL */
+#palco { 
+    position: relative; 
+    width: 100vw; 
+    height: 100vh; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+}
+
+/* 3. IMAGENS DE FUNDO */
+.imagem-camada { 
+    position: absolute; 
+    max-width: 100%; 
+    max-height: 100%; 
+    object-fit: contain; 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%); 
+    z-index: 1; 
+}
+
+/* 4. CAIXA DE INSTRUÇÃO (ESTILO BRANCO/AZUL MICROSOFT) */
+#caixa-instrucao { 
+    position: absolute; 
+    bottom: 40px; 
+    right: 40px; 
+    width: 350px; 
+    background: #ffffff; 
+    border-left: 5px solid #2b579a; 
+    border-radius: 4px; 
+    box-shadow: 0px 10px 30px rgba(0,0,0,0.6); 
+    z-index: 1000; 
+    color: #333333; 
+    display: block; 
+}
+
+#conteudo-texto { 
+    padding: 20px; 
+    min-height: 60px; 
+    font-size: 16px; 
+    line-height: 1.5; 
+}
+
+.divisor { 
+    height: 1px; 
+    background: #eeeeee; 
+    margin: 0 15px; 
+}
+
+.rodape-caixa { 
+    padding: 15px; 
+    display: flex; 
+    justify-content: flex-end; 
+    align-items: center; 
+    gap: 10px; 
+}
+
+/* 5. BOTÕES */
+#btn-avancar { 
+    cursor: pointer; 
+    border: none; 
+    background: #2b579a; 
+    color: white;
+    padding: 10px 20px; 
+    border-radius: 4px; 
+    font-size: 12px; 
+    font-weight: bold; 
+    text-transform: uppercase;
+}
+
+#btn-avancar:hover { 
+    background: #1e3e6d; 
+}
+
+#meu-btn-next, .btn-concluir { 
+    cursor: pointer; 
+    border: none; 
+    background: #28a745 !important; 
+    color: white !important;
+    padding: 10px 20px; 
+    border-radius: 4px; 
+    font-size: 12px; 
+    font-weight: bold; 
+    text-transform: uppercase;
+}
+
+#meu-btn-next:hover { 
+    background: #218838 !important; 
+}
+
+/* 6. CAMADA INTERATIVA E HOLOFOTE (RETÂNGULO LUMINOSO) */
+#camada-interativa { 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    z-index: 10; 
+    pointer-events: none; 
+}
+
+#hotspot {
+    position: absolute;
+    background-color: rgba(0, 153, 255, 0.25) !important; 
+    border: 3px solid #0099ff !important; 
+    box-shadow: 0 0 20px #0099ff, inset 0 0 20px #0099ff !important; 
+    border-radius: 4px;
+    transition: all 0.5s ease-in-out; 
+    pointer-events: none;
+    opacity: 0; /* Começa em 0, mas o JS vai mudar para 1 ao carregar */
+    z-index: 999;
+}
+
+/* MODO EDIÇÃO */
+.modo-edicao { 
+    background: rgba(255, 0, 0, 0.4) !important; 
+    border: 2px solid red !important; 
+    opacity: 1 !important;
+}
