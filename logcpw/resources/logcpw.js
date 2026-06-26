@@ -101,6 +101,7 @@ async function abrirCurso(pastaCurso) {
 
     try {
         const cursoEncontrado = todosOsCursos.find(c => c.pasta === pastaCurso);
+        console.log('[PERFIL-DEBUG] Curso selecionado para abrir:', cursoEncontrado);
         const nomeAluno = localStorage.getItem('cpw_nome_aluno') || "Estudante";
         const nomeCurso = cursoEncontrado ? cursoEncontrado.nome : "Curso CPW";
         const idCurso = cursoEncontrado ? cursoEncontrado.cod_curso : 0;
@@ -109,6 +110,8 @@ async function abrirCurso(pastaCurso) {
             : 0;
         const idAuth = idProgresso || idCurso;
         const vMin = cursoEncontrado ? (cursoEncontrado.versao || 1.0) : 1.0;
+        const perfilCurso = cursoEncontrado ? (cursoEncontrado.perfil || "") : "";
+        console.log(`[PERFIL-DEBUG] Dados de envio -> cod_curso=${idCurso} versao=${vMin} perfil='${perfilCurso}'`);
         
         // 🎯 CAPTURA O PROGRESSO REAL DO BANCO (Tratando caso não exista)
         const numAula = cursoEncontrado && cursoEncontrado.navegacao ? cursoEncontrado.navegacao.aula : 1;
@@ -118,7 +121,8 @@ async function abrirCurso(pastaCurso) {
         const arquivo = `${caminhoBase}${pastaCurso}\\${pastaCurso}.exe`;
 
         // 🚀 Agora o launcher envia o código do curso para validação e o id real de progresso para o menu.
-        const comando = `cmd /c start "" "${arquivo}" --aluno="${nomeAluno}" --curso="${nomeCurso}" --cod_curso=${idCurso} --id_auth=${idAuth} --id_progresso=${idProgresso} --v_min=${vMin} --aula=${numAula} --topico=${numTopico}`;
+        const comando = `cmd /c start "" "${arquivo}" --aluno="${nomeAluno}" --curso="${nomeCurso}" --cod_curso=${idCurso} --id_auth=${idAuth} --id_progresso=${idProgresso} --v_min=${vMin} --perfil="${perfilCurso}" --aula=${numAula} --topico=${numTopico}`;
+        console.log('[PERFIL-DEBUG] Comando de abertura:', comando);
         
         Neutralino.os.execCommand(comando, { background: true });
 
@@ -176,6 +180,13 @@ async function fazerLogin() {
                 localStorage.setItem('cpw_nome_aluno', resultado.dados.nome);
                 localStorage.setItem('cpw_pacote_aluno', resultado.dados.pacote);
                 todosOsCursos = resultado.dados.cursos;
+                console.log('[PERFIL-DEBUG] Cursos recebidos do login:', todosOsCursos.map(c => ({
+                    pasta: c.pasta,
+                    cod_curso: c.cod_curso,
+                    versao: c.versao,
+                    perfil: c.perfil,
+                    status: c.status
+                })));
                 
                 loginContainer.style.display = 'none'; 
                 dashboard.classList.remove('dashboard-oculto');

@@ -1,4 +1,4 @@
-// =========================================================
+﻿// =========================================================
 // 0. INICIALIZAÇÃO DO NEUTRALINO
 // =========================================================
 try {
@@ -15,24 +15,115 @@ try {
 // =========================================================
 let nomeDoAluno = "Estudante";
 let nomeDoCurso = "Curso CPW";
-let auth_id = 0;        // 🆔 ID real da linha de progresso na tabela tela_aula
-let cod_curso = 0;      // 🧭 Código do curso (matriz) usado na validação de segurança
-let id_controle = 0;    // 🎯 ID real da linha de progresso na tabela tela_aula
+let auth_id = 0;        // ID real da linha de progresso na tabela tela_aula
+let cod_curso = 0;      // Código do curso (matriz) usado na validação de segurança
+let id_controle = 0;    // ID real da linha de progresso na tabela tela_aula
 let v_minima_exigida = 1.0;
+let perfil_minimo_exigido = "";
 
 let aulaAtual = 1;
 let topicoAtual = 1;
 
-// 🎯 VARIÁVEIS GLOBAIS PARA CONTROLE DOS TRÊS ESTADOS VISUAIS DO CARD
-let modoPraticarAtivo = false;   // Status 1 (Fazendo apostila)
-let modoSenhaInstrutor = false;  // Status 2 (Apostila pronta, esperando senha)
-let modoTesteLiberado = false;   // Coluna teste = 1 (Liberado para avaliar)
+let modoPraticarAtivo = false;
+let modoSenhaInstrutor = false;
+let modoTesteLiberado = false;
 
 // =========================================================
-// 1.1 IDENTIDADE FIXA DESTE PACOTE DE CURSO (Hardcoded)
+// 1.1 IDENTIDADE DO PACOTE (lida do config.js)
 // =========================================================
-const ID_CURSO_ESTE_ARQUIVO = 1; 
-const VERSAO_DESTE_ARQUIVO = 1.0;
+let ID_CURSO_ESTE_ARQUIVO = 0;
+let VERSAO_DESTE_ARQUIVO = 0;
+let PERFIL_DESTE_ARQUIVO = "";
+
+async function carregarManifesto() {
+    // Carrega os valores do config.js (definido inline na página)
+    if (typeof CONFIG_CURSO !== 'undefined') {
+        ID_CURSO_ESTE_ARQUIVO = Number(CONFIG_CURSO.cod_curso ?? 0);
+        VERSAO_DESTE_ARQUIVO  = Number(CONFIG_CURSO.versao ?? 0);
+        PERFIL_DESTE_ARQUIVO = CONFIG_CURSO.perfil ?? "";
+        console.log(`[MANIFESTO] ✓ Carregado de config.js - cod_curso=${ID_CURSO_ESTE_ARQUIVO} versao=${VERSAO_DESTE_ARQUIVO} perfil=${PERFIL_DESTE_ARQUIVO}`);
+
+        if (!ID_CURSO_ESTE_ARQUIVO || !VERSAO_DESTE_ARQUIVO) {
+            console.error(`[MANIFESTO] config.js incompleto ou invalido - cod_curso=${ID_CURSO_ESTE_ARQUIVO} versao=${VERSAO_DESTE_ARQUIVO} perfil=${PERFIL_DESTE_ARQUIVO}`);
+            if (typeof gravarLogSuporte === 'function') {
+                gravarLogSuporte('CONFIG', `config.js incompleto ou invalido. cod_curso=${ID_CURSO_ESTE_ARQUIVO} versao=${VERSAO_DESTE_ARQUIVO} perfil=${PERFIL_DESTE_ARQUIVO}`);
+            }
+        }
+    } else {
+        console.error('[MANIFESTO] config.js ausente ou nao carregado - CONFIG_CURSO nao esta definido.');
+        if (typeof gravarLogSuporte === 'function') {
+            gravarLogSuporte('CONFIG', 'config.js ausente ou nao carregado - CONFIG_CURSO nao esta definido.');
+        }
+    }
+}
+
+function normalizarPerfil(valor) {
+    return String(valor || "").trim().toLowerCase();
+}
+
+function validarPacoteDoCurso() {
+    // Trava 1: abertura direta do .exe (sem passar pelo logcpw)
+    if (cod_curso === 0 && id_controle === 0 && auth_id === 0) {
+        if (typeof gravarLogSuporte === 'function') {
+            gravarLogSuporte('ACESSO NEGADO', `Abertura direta sem login detectada. cod_recebido=${cod_curso} id_controle=${id_controle} auth_id=${auth_id}`);
+        }
+        bloquearTelaComErro(
+            'Acesso Negado',
+            'Este curso não pode ser aberto diretamente.<br><br>Por favor, feche esta janela, faça o login no <b>Portal do Aluno</b> e inicie o curso por lá.'
+        );
+        return false;
+    }
+
+    console.log(
+        `[VALIDACAO-PACOTE] cod_recebido=${cod_curso} cod_arquivo=${ID_CURSO_ESTE_ARQUIVO} versao_min_recebida=${v_minima_exigida} versao_arquivo=${VERSAO_DESTE_ARQUIVO} perfil_min_recebido=${perfil_minimo_exigido} perfil_arquivo=${PERFIL_DESTE_ARQUIVO}`
+    );
+
+    if (!ID_CURSO_ESTE_ARQUIVO || !VERSAO_DESTE_ARQUIVO) {
+        if (typeof gravarLogSuporte === 'function') {
+            gravarLogSuporte('ACESSO NEGADO', `Falha de configuracao interna do curso. cod_arquivo=${ID_CURSO_ESTE_ARQUIVO} versao_arquivo=${VERSAO_DESTE_ARQUIVO}`);
+        }
+        bloquearTelaComErro(
+            'Acesso Negado',
+            'Este curso nao pode ser iniciado corretamente.<br><br>Por favor, chame o seu instrutor.'
+        );
+        return false;
+    }
+
+    if (Number(VERSAO_DESTE_ARQUIVO) !== Number(v_minima_exigida)) {
+        if (typeof gravarLogSuporte === 'function') {
+            gravarLogSuporte('ACESSO NEGADO', `Versao divergente. versao_recebida=${v_minima_exigida} versao_arquivo=${VERSAO_DESTE_ARQUIVO} cod_recebido=${cod_curso} cod_arquivo=${ID_CURSO_ESTE_ARQUIVO}`);
+        }
+        bloquearTelaComErro(
+            'Acesso Negado',
+            'O curso está com a versão desatualizada.<br><br>Por favor, chame o seu instrutor.'
+        );
+        return false;
+    }
+
+    if (Number(cod_curso) !== Number(ID_CURSO_ESTE_ARQUIVO)) {
+        if (typeof gravarLogSuporte === 'function') {
+            gravarLogSuporte('ACESSO NEGADO', `Codigo do curso divergente. cod_recebido=${cod_curso} cod_arquivo=${ID_CURSO_ESTE_ARQUIVO} versao_recebida=${v_minima_exigida} versao_arquivo=${VERSAO_DESTE_ARQUIVO}`);
+        }
+        bloquearTelaComErro(
+            'Acesso Negado',
+            'O curso está com o código errado.<br><br>Por favor, chame o seu instrutor.'
+        );
+        return false;
+    }
+
+    if (perfil_minimo_exigido && normalizarPerfil(PERFIL_DESTE_ARQUIVO) !== normalizarPerfil(perfil_minimo_exigido)) {
+        if (typeof gravarLogSuporte === 'function') {
+            gravarLogSuporte('ACESSO NEGADO', `Perfil divergente. perfil_recebido=${normalizarPerfil(perfil_minimo_exigido)} perfil_arquivo=${normalizarPerfil(PERFIL_DESTE_ARQUIVO)} cod_recebido=${cod_curso} cod_arquivo=${ID_CURSO_ESTE_ARQUIVO}`);
+        }
+        bloquearTelaComErro(
+            'Acesso Negado',
+            `O curso aberto e do perfil <b>${normalizarPerfil(PERFIL_DESTE_ARQUIVO) || 'nao definido'}</b>, mas sua matricula ativa e do perfil <b>${normalizarPerfil(perfil_minimo_exigido)}</b>.<br><br>Feche esta janela e inicie o curso correto pelo <b>Portal do Aluno</b>.`
+        );
+        return false;
+    }
+
+    return true;
+}
 
 if (typeof NL_ARGS !== 'undefined') {
     NL_ARGS.forEach(arg => {
@@ -42,18 +133,11 @@ if (typeof NL_ARGS !== 'undefined') {
 
         if (arg.startsWith('--aluno='))   nomeDoAluno = valor;
         if (arg.startsWith('--curso='))   nomeDoCurso = valor;
-        
-        if (arg.startsWith('--id_auth=')) {
-            auth_id = parseInt(valor) || 0;
-        }
-        if (arg.startsWith('--id_progresso=')) {
-            id_controle = parseInt(valor) || 0;
-        }
-        if (arg.startsWith('--cod_curso=')) {
-            cod_curso = parseInt(valor) || 0;
-        }
-        
+        if (arg.startsWith('--id_auth='))      auth_id = parseInt(valor) || 0;
+        if (arg.startsWith('--id_progresso=')) id_controle = parseInt(valor) || 0;
+        if (arg.startsWith('--cod_curso='))    cod_curso = parseInt(valor) || 0;
         if (arg.startsWith('--v_min='))   v_minima_exigida = parseFloat(valor);
+        if (arg.startsWith('--perfil='))  perfil_minimo_exigido = valor;
         if (arg.startsWith('--aula='))    aulaAtual = parseInt(valor);
         if (arg.startsWith('--topico='))  topicoAtual = parseInt(valor);
     });
@@ -65,19 +149,25 @@ if (typeof NL_ARGS !== 'undefined') {
 
 function bloquearTelaComErro(titulo, message) {
     document.body.innerHTML = `
-        <div style="display: flex; flex-direction: column; height: 100vh; width: 100vw; justify-content: center; align-items: center; background-color: #f8f9fa; color: #333; font-family: 'Segoe UI', sans-serif; text-align: center; padding: 20px; box-sizing: border-box;">
-            <div style="background: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 500px; border-top: 5px solid #d93025;">
-                <h1 style="color: #d93025; margin-top: 0; font-size: 1.8em;">⚠️ ${titulo}</h1>
-                <p style="font-size: 1.1em; color: #555; line-height: 1.5; margin-bottom: 30px;">${message}</p>
-                <button onclick="encerrarAplicativo()" style="background: #d93025; color: white; border: none; padding: 12px 25px; border-radius: 5px; font-size: 1em; font-weight: bold; cursor: pointer;">Fechar Aplicativo</button>
+        <div style="display:flex;flex-direction:column;height:100vh;width:100vw;justify-content:center;align-items:center;background-color:#f8f9fa;color:#333;font-family:'Segoe UI',sans-serif;text-align:center;padding:20px;box-sizing:border-box;">
+            <div style="background:white;padding:40px;border-radius:10px;box-shadow:0 4px 15px rgba(0,0,0,0.1);width:560px;max-width:100%;min-height:280px;border-top:5px solid #d93025;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;">
+                <h1 style="color:#d93025;margin-top:0;font-size:1.8em;">⚠️ ${titulo}</h1>
+                <p style="font-size:1.1em;color:#555;line-height:1.5;margin-bottom:30px;">${message}</p>
+                <button onclick="encerrarAplicativo()" style="background:#d93025;color:white;border:none;padding:12px 25px;border-radius:5px;font-size:1em;font-weight:bold;cursor:pointer;">Fechar Aplicativo</button>
             </div>
         </div>
     `;
 }
 
 window.addEventListener('load', async () => {
+    await carregarManifesto();
+
     if (typeof NL_ARGS !== 'undefined') {
         console.log("ARGUMENTOS REAIS QUE CHEGARAM:\n", NL_ARGS.join("\n"));
+    }
+
+    if (!validarPacoteDoCurso()) {
+        return;
     }
 
     if (id_controle === 0) {
@@ -91,17 +181,13 @@ window.addEventListener('load', async () => {
             if (resposta.ok) {
                 const dados = await resposta.json();
                 if (dados) {
-                    aulaAtual = typeof dados.aula === 'number' ? dados.aula : aulaAtual;
+                    aulaAtual   = typeof dados.aula   === 'number' ? dados.aula   : aulaAtual;
                     topicoAtual = typeof dados.topico === 'number' ? dados.topico : topicoAtual;
-                    
                     const statusPraticarDoBanco = parseInt(dados.praticar) || 0;
-                    const statusTesteDoBanco = parseInt(dados.teste) || 0;
-
-                    // 🎛️ Processa os dados recebidos do banco e liga os modos lógicos
-                    modoPraticarAtivo = (statusPraticarDoBanco === 1);
-                    modoSenhaInstrutor = (statusPraticarDoBanco === 2); 
-                    modoTesteLiberado = (statusTesteDoBanco === 1);
-                    
+                    const statusTesteDoBanco    = parseInt(dados.teste)    || 0;
+                    modoPraticarAtivo  = (statusPraticarDoBanco === 1);
+                    modoSenhaInstrutor = (statusPraticarDoBanco === 2);
+                    modoTesteLiberado  = (statusTesteDoBanco === 1);
                     console.log(`[MENU-REFRESH] Banco respondeu -> Praticar: ${statusPraticarDoBanco} | Teste: ${statusTesteDoBanco}`);
                 }
             }
@@ -111,32 +197,30 @@ window.addEventListener('load', async () => {
     }
 
     configurarInterface();
-    carregarMenu(); 
-    atualizarCardProgresso(false); 
+    carregarMenu();
+    atualizarCardProgresso(false);
 });
 
 function configurarInterface() {
     const elNomeAluno = document.getElementById('nome-aluno');
     if (elNomeAluno) elNomeAluno.innerText = nomeDoAluno;
-    
+
     const cName = document.getElementById('course-name');
-    if (cName) cName.innerText = nomeDoCurso; 
+    if (cName) cName.innerText = nomeDoCurso;
 
     const btnSair = document.getElementById('btnSair');
     if (btnSair) btnSair.onclick = () => encerrarAplicativo();
 
-    // 🔗 VINCULAÇÃO E TRAVA DO BOTÃO CONTINUAR
     const btnMenuContinuar = document.getElementById('btnMenuContinuar');
     if (btnMenuContinuar) {
-        // Se concluiu a teoria (1) ou está na trava da senha (2), bloqueia o botão de Teoria
         if (modoPraticarAtivo || modoSenhaInstrutor || modoTesteLiberado) {
             btnMenuContinuar.disabled = true;
-            btnMenuContinuar.title = "Teoria concluída!";
-            btnMenuContinuar.classList.add('btn-bloqueado'); // Opaco via CSS
+            btnMenuContinuar.title = "Teoria concluida!";
+            btnMenuContinuar.classList.add('btn-bloqueado');
             btnMenuContinuar.onclick = null;
         } else {
             btnMenuContinuar.disabled = false;
-            btnMenuContinuar.classList.remove('btn-bloqueado'); // Normal via CSS
+            btnMenuContinuar.classList.remove('btn-bloqueado');
             btnMenuContinuar.onclick = () => {
                 const aulaObj = dadosMg.find(a => a.id === aulaAtual);
                 if (aulaObj && aulaObj.topicos[topicoAtual - 1]) {
@@ -148,26 +232,17 @@ function configurarInterface() {
         }
     }
 
-    // 🔗 VINCULAÇÃO E LIBERAÇÃO DO BOTÃO PRATICAR
     const btnMenuPraticar = document.getElementById('btnMenuPraticar');
     if (btnMenuPraticar) {
         if (modoPraticarAtivo) {
             btnMenuPraticar.disabled = false;
-            btnMenuPraticar.classList.remove('btn-bloqueado'); // Brilhante/Ativo via CSS
-            
+            btnMenuPraticar.classList.remove('btn-bloqueado');
             btnMenuPraticar.onclick = async () => {
-                console.log("[MENU] Botão Praticar clicado. Gravando status 2 e encerrando...");
                 try {
                     await fetch('http://localhost:3000/api/aula/salvar', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            id: id_controle,
-                            aula: aulaAtual,
-                            topico: topicoAtual,
-                            frame: 7, 
-                            praticar: 2 // Prática concluída, entra em compasso de espera pela senha
-                        })
+                        body: JSON.stringify({ id: id_controle, aula: aulaAtual, topico: topicoAtual, frame: 7, praticar: 2 })
                     });
                 } catch (err) {
                     console.error("[ERRO] Erro ao salvar status de prática concluída:", err);
@@ -175,19 +250,17 @@ function configurarInterface() {
                 encerrarAplicativo();
             };
         } else {
-            // Bloqueado na teoria ou se já concluiu a prática (status 2)
             btnMenuPraticar.disabled = true;
             btnMenuPraticar.classList.add('btn-bloqueado');
             btnMenuPraticar.onclick = null;
         }
     }
 
-    // 🔗 VINCULAÇÃO E LIBERAÇÃO DO BOTÃO TESTES / AVALIAÇÕES
     const btnMenuTestes = document.getElementById('btnMenuTestes');
     if (btnMenuTestes) {
         if (modoTesteLiberado) {
             btnMenuTestes.disabled = false;
-            btnMenuTestes.classList.remove('btn-bloqueado'); // Brilhante/Ativo via CSS
+            btnMenuTestes.classList.remove('btn-bloqueado');
             btnMenuTestes.onclick = () => {
                 const aulaObj = dadosMg.find(a => a.id === aulaAtual);
                 if (aulaObj && aulaObj.testeUrl) {
@@ -209,38 +282,34 @@ function configurarInterface() {
 function carregarMenu() {
     const container = document.getElementById('menu-aulas-container');
     if (!container) return;
-    container.innerHTML = ''; 
+    container.innerHTML = '';
 
     dadosMg.forEach(aula => {
         const idSubMenu = `aula-${aula.id}`;
         let htmlTopicos = '';
-        
+
         aula.topicos.forEach((t, index) => {
             const numeroTopico = index + 1;
             const idDaAula = t.url.replace('.html', '');
-            
             let corClasse = "";
             let icone = "▶️";
-            let clique = ""; // 🎯 Será montado dinamicamente abaixo
+            let clique = "";
 
-            let pesoAtual = (aulaAtual * 100) + topicoAtual;
-            let pesoIteracao = (aula.id * 100) + numeroTopico;
+            let pesoAtual     = (aulaAtual * 100) + topicoAtual;
+            let pesoIteracao  = (aula.id * 100) + numeroTopico;
 
             if (pesoIteracao < pesoAtual) {
-                // 🔄 TÓPICO ANTIGO (REVISÃO)
-                corClasse = "color: #dc3545; font-weight: normal;"; 
-                icone = "✅"; 
-                clique = `onclick="abrirTopico('${idDaAula}', true)"`; // 🎯 Passa 'true' para o modo revisão
+                corClasse = "color: #dc3545; font-weight: normal;";
+                icone = "✅";
+                clique = `onclick="abrirTopico('${idDaAula}', true)"`;
             } else if (pesoIteracao === pesoAtual) {
-                // 🟢 TÓPICO ATUAL (PROGRESSO)
-                corClasse = "color: #28a745; font-weight: bold;"; 
+                corClasse = "color: #28a745; font-weight: bold;";
                 icone = "🟢";
-                clique = `onclick="abrirTopico('${idDaAula}', false)"`; // 🎯 Passa 'false' para progresso normal
+                clique = `onclick="abrirTopico('${idDaAula}', false)"`;
             } else {
-                // 🔒 TÓPICO BLOQUEADO
-                corClasse = "color: #6c757d; font-style: italic;"; 
+                corClasse = "color: #6c757d; font-style: italic;";
                 icone = "🔒";
-                clique = `onclick="alert('Tópico bloqueado!')"`; 
+                clique = `onclick="alert('Tópico bloqueado!')"`;
             }
 
             htmlTopicos += `<li class="topico-item" ${clique} style="${corClasse}">${icone} ${t.nome}</li>`;
@@ -251,7 +320,7 @@ function carregarMenu() {
         divAula.innerHTML = `
             <div class="aula-item" onclick="toggleAula('${idSubMenu}')">
                 <span>${aula.id}. ${aula.titulo}</span>
-                <span class="seta" id="seta-${idSubMenu}">▼</span> 
+                <span class="seta" id="seta-${idSubMenu}">▼</span>
             </div>
             <ul id="${idSubMenu}" class="sub-menu">${htmlTopicos}</ul>`;
         container.appendChild(divAula);
@@ -259,72 +328,64 @@ function carregarMenu() {
 }
 
 function atualizarCardProgresso(concluido) {
-    const tituloAula = document.getElementById('aula-atual-titulo');
+    const tituloAula   = document.getElementById('aula-atual-titulo');
     const tituloTopico = document.getElementById('topico-atual-titulo');
 
-    // 🎯 CASO A: Praticar Concluído! Exibe campo de entrada para o Instrutor
     if (modoSenhaInstrutor && !modoTesteLiberado) {
         if (tituloAula) tituloAula.innerText = `Praticar Concluído! 📖`;
         if (tituloTopico) {
             tituloTopico.innerHTML = `
-                <span style="color: #666; font-size: 0.95em; display:block; margin-bottom: 15px;">
+                <span style="color:#666;font-size:0.95em;display:block;margin-bottom:15px;">
                     Peça ao seu instrutor que digite a senha de liberação para os testes.
                 </span>
-                <div style="display: flex; gap: 10px; margin-top: 10px;">
-                    <input type="password" id="inputSenhaInstrutor" placeholder="Senha do Instrutor" 
-                           style="padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; width: 180px; box-sizing: border-box;">
-                    <button onclick="validarSenhaDoInstrutor()" 
-                            style="background: #0078d7; color: white; border: none; padding: 8px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 14px;">
+                <div style="display:flex;gap:10px;margin-top:10px;">
+                    <input type="password" id="inputSenhaInstrutor" placeholder="Senha do Instrutor"
+                           style="padding:8px 12px;border:1px solid #ccc;border-radius:4px;font-size:14px;width:180px;box-sizing:border-box;">
+                    <button onclick="validarSenhaDoInstrutor()"
+                            style="background:#0078d7;color:white;border:none;padding:8px 15px;border-radius:4px;font-weight:bold;cursor:pointer;font-size:14px;">
                         Liberar Avaliação
                     </button>
                 </div>
             `;
         }
-        return; 
+        return;
     }
 
-    // 🎯 CASO B: Teste Liberado! Pronto para começar a prova
     if (modoTesteLiberado) {
         if (tituloAula) tituloAula.innerText = `Avaliação Disponível! 📝`;
         if (tituloTopico) {
-            tituloTopico.innerHTML = `<span style="color: #28a745; font-weight: bold;">➔ Clique no botão de Avaliações na barra inferior para iniciar.</span>`;
+            tituloTopico.innerHTML = `<span style="color:#28a745;font-weight:bold;">➔ Clique no botão de Avaliações na barra inferior para iniciar.</span>`;
         }
         return;
     }
 
-    // CASO C: Fim da Teoria (Status 1) -> Mandando praticar na apostila
     if (modoPraticarAtivo) {
         if (tituloAula) tituloAula.innerText = `Aula ${aulaAtual} Concluída! 🎉`;
         if (tituloTopico) {
-            tituloTopico.innerHTML = `<span style="color: #28a745; font-weight: bold;">➔ Faça os exercícios da sua apostila.</span>`;
+            tituloTopico.innerHTML = `<span style="color:#28a745;font-weight:bold;">➔ Faça os exercícios da sua apostila.</span>`;
         }
-        return; 
+        return;
     }
 
-    // Fluxo teórico comum
     const aulaObj = dadosMg.find(a => a.id === aulaAtual);
     if (aulaObj && aulaObj.topicos[topicoAtual - 1]) {
         const topicoObj = aulaObj.topicos[topicoAtual - 1];
-        if (tituloAula) tituloAula.innerText = `Aula ${aulaAtual}: ${aulaObj.titulo}`;
+        if (tituloAula)   tituloAula.innerText   = `Aula ${aulaAtual}: ${aulaObj.titulo}`;
         if (tituloTopico) tituloTopico.innerText = `Tópico: ${topicoObj.nome}`;
     }
 }
 
-// 🎯 FUNÇÃO QUE GERA E VALIDA A SENHA DO DIA COM HÍFEN (avantiD-M) - SEM POP-UP DE SUCESSO
 async function validarSenhaDoInstrutor() {
     const inputSenha = document.getElementById('inputSenhaInstrutor');
     if (!inputSenha) return;
 
     const hoje = new Date();
-    const dia = hoje.getDate();       
-    const mes = hoje.getMonth() + 1;   
-
-    // 🔑 Mágica: Cria o texto exato "avanti17-6"
+    const dia  = hoje.getDate();
+    const mes  = hoje.getMonth() + 1;
     const senhaCorretaDoDia = `avanti${dia}-${mes}`;
 
     if (inputSenha.value.trim() === senhaCorretaDoDia) {
         console.log("[INSTRUTOR] Senha correta! Gravando liberação do teste no banco...");
-        
         try {
             await fetch('http://localhost:3000/api/aula/salvar', {
                 method: 'POST',
@@ -334,20 +395,14 @@ async function validarSenhaDoInstrutor() {
                     aula: aulaAtual,
                     topico: topicoAtual,
                     frame: 7,
-                    praticar: 0, // Zera a apostila para fechar o ciclo
-                    teste: 1     // 🎯 Ativa a coluna teste como 1!
+                    praticar: 0,
+                    teste: 1
                 })
             });
-
-            // Força a mutação do estado visual sem precisar dar F5 na página
             modoSenhaInstrutor = false;
-            modoTesteLiberado = true;
-            
-            configurarInterface();   // Acende o livrinho de provas seguindo o CSS (Instântaneo!)
-            atualizarCardProgresso(); // Transforma o card com a frase de sucesso (Instântaneo!)
-            
-            // ❌ REMOVIDO: O alert() chato de sucesso foi banido daqui!
-
+            modoTesteLiberado  = true;
+            configurarInterface();
+            atualizarCardProgresso();
         } catch (err) {
             console.error("Falha ao salvar liberação de testes:", err);
             alert("Erro de comunicação com o servidor.");
@@ -362,36 +417,31 @@ async function validarSenhaDoInstrutor() {
 function toggleAula(idMenu) {
     const menuClicado = document.getElementById(idMenu);
     const setaClicada = document.getElementById(`seta-${idMenu}`);
-    if(!menuClicado) return;
+    if (!menuClicado) return;
     const isAberto = menuClicado.classList.contains('show');
     document.querySelectorAll('.sub-menu').forEach(el => el.classList.remove('show'));
     document.querySelectorAll('.seta').forEach(el => el.innerText = '▼');
     if (!isAberto) {
         menuClicado.classList.add('show');
-        if(setaClicada) setaClicada.innerText = '▲';
+        if (setaClicada) setaClicada.innerText = '▲';
     }
 }
 
-function abrirTopico(id, isRevisao = false) { 
+function abrirTopico(id, isRevisao = false) {
     let urlDestino = `aula.html?id=${id}&id_progresso=${id_controle}&aula=${aulaAtual}&topico=${topicoAtual}&slide=0`;
-    
-    // 🎯 Se for um tópico antigo, carimba a URL para avisar a tela de aula
     if (isRevisao) {
         urlDestino += `&modo=revisao`;
         console.log(`[NAVEGAÇÃO] Abrindo aula antiga no MODO REVISÃO: ${id}`);
     } else {
         console.log(`[NAVEGAÇÃO] Abrindo aula atual no MODO PROGRESSO: ${id}`);
     }
-
-    window.location.href = urlDestino; 
+    window.location.href = urlDestino;
 }
 
-// Ajuste isso no final do seu mg.js para passar as credenciais para a prova:
-function abrirTeste(url) { 
-    // Garante que os dados reais do aluno e do curso entrem na URL da prova
+function abrirTeste(url) {
     const urlFormatada = `${url}&id_aluno=${id_controle}&cod_curso=${cod_curso}&id_progresso=${id_controle}&aula_num=${aulaAtual}`;
     console.log("[MENU] Abrindo teste com a URL formatada:", urlFormatada);
-    window.location.href = urlFormatada; 
+    window.location.href = urlFormatada;
 }
 
 async function encerrarAplicativo() {

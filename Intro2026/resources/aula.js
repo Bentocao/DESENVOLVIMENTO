@@ -344,7 +344,7 @@ async function proximo() {
             });
 
             // ⚡ Passa a tag &modo=revisao para a próxima tela se o aluno estiver revisando
-            let stringUrlProximo = `aula.html?id=${proximoUrl}&id_progresso=${id_controle}&aula=${aulaAtual}&topico=${topicoAtual}&slide=0`;
+            let stringUrlProximo = `aula.html?id=${proximoUrl}&id_progresso=${id_controle}&aula=${novaAula}&topico=${novoTopico}&slide=0`;
             if (isModoRevisao) stringUrlProximo += `&modo=revisao`;
 
             window.location.href = stringUrlProximo;
@@ -356,6 +356,7 @@ async function proximo() {
             if (isModoRevisao) {
                 window.location.href = `mg.html?id_progresso=${id_controle}&aula=${aulaAtual}&topico=${topicoAtual}&frame=${frameReal}`;
             } else {
+                await salvarConclusaoDaAulaNoBanco();
                 window.location.href = `mg.html?id_progresso=${id_controle}&aula=${aulaAtual}&topico=${topicoAtual}&frame=${frameReal}&praticar=1`;
             }
         }
@@ -402,6 +403,31 @@ async function salvarProgressoNoBanco() {
 
     } catch (e) {
         console.error("Falha ao persistir dados no banco local:", e);
+    }
+}
+
+async function salvarConclusaoDaAulaNoBanco() {
+    if (isModoRevisao) return;
+
+    try {
+        const frameParaSalvar = slideAtual + 1;
+        console.log(`[BANCO] Gravando conclusão da aula -> Linha ID: ${id_controle}, Aula: ${aulaAtual}, Tópico: ${topicoAtual}, Frame: ${frameParaSalvar}, Praticar: 1`);
+
+        await fetch('http://localhost:3000/api/aula/salvar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                id: id_controle,
+                aula: aulaAtual,
+                topico: topicoAtual,
+                frame: frameParaSalvar,
+                praticar: 1
+            })
+        });
+
+        console.log('[BANCO] Conclusão persistida com praticar=1.');
+    } catch (e) {
+        console.error('[ERRO] Falha ao gravar conclusão da aula:', e);
     }
 }
 
