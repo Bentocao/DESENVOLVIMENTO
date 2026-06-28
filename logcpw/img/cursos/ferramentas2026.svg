@@ -1,0 +1,38 @@
+<svg width="520" height="800" viewBox="0 0 520 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="toolBg" x1="64" y1="40" x2="436" y2="742" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F5F9FF"/>
+      <stop offset="1" stop-color="#DCEBFF"/>
+    </linearGradient>
+    <linearGradient id="toolScreen" x1="120" y1="220" x2="398" y2="466" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EAF3FF"/>
+      <stop offset="1" stop-color="#BDD7FF"/>
+    </linearGradient>
+    <linearGradient id="toolDesk" x1="152" y1="550" x2="364" y2="622" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#445064"/>
+      <stop offset="1" stop-color="#242D39"/>
+    </linearGradient>
+  </defs>
+  <rect width="520" height="800" rx="28" fill="url(#toolBg)"/>
+  <circle cx="108" cy="120" r="24" fill="#C8DEFF" opacity="0.8"/>
+  <circle cx="404" cy="104" r="18" fill="#E0EDFF" opacity="0.9"/>
+  <rect x="104" y="206" width="312" height="244" rx="34" fill="url(#toolScreen)"/>
+  <g>
+    <rect x="138" y="244" width="88" height="88" rx="20" fill="#F8FBFF"/>
+    <circle cx="196" cy="302" r="22" stroke="#5B87D6" stroke-width="12"/>
+    <path d="M212 318L230 336" stroke="#5B87D6" stroke-width="12" stroke-linecap="round"/>
+    <rect x="294" y="244" width="88" height="88" rx="20" fill="#F8FBFF"/>
+    <path d="M304 328L340 292" stroke="#FF9C6A" stroke-width="14" stroke-linecap="round"/>
+    <path d="M314 274L350 310" stroke="#FF9C6A" stroke-width="14" stroke-linecap="round"/>
+    <circle cx="322" cy="302" r="10" fill="#FFE4D6"/>
+    <rect x="154" y="354" width="214" height="36" rx="18" fill="#F8FBFF"/>
+    <rect x="172" y="367" width="92" height="10" rx="5" fill="#87A6D8"/>
+    <rect x="276" y="367" width="74" height="10" rx="5" fill="#C1D4F0"/>
+  </g>
+  <g opacity="0.9">
+    <circle cx="152" cy="640" r="18" fill="#FFCCA8"/>
+    <circle cx="260" cy="666" r="22" fill="#A9D1FF"/>
+    <circle cx="352" cy="636" r="16" fill="#BFE8C2"/>
+    <path d="M178 640H334" stroke="#7C8CA3" stroke-width="12" stroke-linecap="round" opacity="0.4"/>
+  </g>
+</svg>

@@ -1,0 +1,29 @@
+<svg width="520" height="800" viewBox="0 0 520 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="netBg" x1="62" y1="42" x2="442" y2="742" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F3FAFF"/>
+      <stop offset="1" stop-color="#DDEEFF"/>
+    </linearGradient>
+    <linearGradient id="netScreen" x1="120" y1="224" x2="398" y2="468" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7EC8FF"/>
+      <stop offset="1" stop-color="#1A7AE6"/>
+    </linearGradient>
+    <linearGradient id="netDesk" x1="150" y1="548" x2="370" y2="622" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#445064"/>
+      <stop offset="1" stop-color="#252E3A"/>
+    </linearGradient>
+  </defs>
+  <rect width="520" height="800" rx="28" fill="url(#netBg)"/>
+  <circle cx="96" cy="116" r="24" fill="#C5E3FF" opacity="0.8"/>
+  <circle cx="424" cy="98" r="18" fill="#E9F5FF" opacity="0.92"/>
+  <rect x="104" y="210" width="312" height="248" rx="34" fill="url(#netScreen)"/>
+  <rect x="130" y="232" width="260" height="30" rx="15" fill="#F6FBFF" opacity="0.96"/>
+  <circle cx="166" cy="258" r="6" fill="#9ACBFF"/>
+  <rect x="182" y="252" width="166" height="12" rx="6" fill="#D6ECFF"/>
+  <circle cx="260" cy="342" r="74" stroke="#FFFFFF" stroke-width="10" opacity="0.96"/>
+  <path d="M186 342H334" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" opacity="0.96"/>
+  <path d="M260 268C286 290 302 314 302 342C302 370 286 394 260 416" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" opacity="0.96"/>
+  <path d="M260 268C234 290 218 314 218 342C218 370 234 394 260 416" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" opacity="0.96"/>
+  <path d="M208 302C222 312 240 318 260 318C280 318 298 312 312 302" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" opacity="0.96"/>
+  <path d="M208 382C222 372 240 366 260 366C280 366 298 372 312 382" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" opacity="0.96"/>
+</svg>
