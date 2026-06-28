@@ -1,0 +1,33 @@
+<svg width="520" height="800" viewBox="0 0 520 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="excelBg" x1="60" y1="42" x2="442" y2="742" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F5FFF7"/>
+      <stop offset="1" stop-color="#D7F1DE"/>
+    </linearGradient>
+    <linearGradient id="excelPanel" x1="120" y1="214" x2="398" y2="488" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1A8F4B"/>
+      <stop offset="1" stop-color="#0B5A2C"/>
+    </linearGradient>
+    <linearGradient id="excelDesk" x1="150" y1="548" x2="370" y2="622" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#445064"/>
+      <stop offset="1" stop-color="#252E3A"/>
+    </linearGradient>
+  </defs>
+  <rect width="520" height="800" rx="28" fill="url(#excelBg)"/>
+  <circle cx="106" cy="116" r="24" fill="#BDECCB" opacity="0.82"/>
+  <circle cx="420" cy="96" r="18" fill="#E6F7EB" opacity="0.9"/>
+  <rect x="112" y="196" width="296" height="280" rx="34" fill="url(#excelPanel)"/>
+  <rect x="136" y="224" width="248" height="220" rx="24" fill="#F9FFFB" opacity="0.96"/>
+  <path d="M176 244V444" stroke="#C3E8CF" stroke-width="4"/>
+  <path d="M214 244V444" stroke="#C3E8CF" stroke-width="4"/>
+  <path d="M252 244V444" stroke="#C3E8CF" stroke-width="4"/>
+  <path d="M290 244V444" stroke="#C3E8CF" stroke-width="4"/>
+  <path d="M328 244V444" stroke="#C3E8CF" stroke-width="4"/>
+  <path d="M148 278H372" stroke="#C3E8CF" stroke-width="4"/>
+  <path d="M148 318H372" stroke="#C3E8CF" stroke-width="4"/>
+  <path d="M148 358H372" stroke="#C3E8CF" stroke-width="4"/>
+  <path d="M148 398H372" stroke="#C3E8CF" stroke-width="4"/>
+  <rect x="106" y="252" width="56" height="168" fill="#0C6A34"/>
+  <path d="M133 302L153 332L133 362" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M153 302L133 332L153 362" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

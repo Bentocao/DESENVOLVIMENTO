@@ -1,0 +1,28 @@
+<svg width="520" height="800" viewBox="0 0 520 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="wordBg" x1="62" y1="44" x2="446" y2="740" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F4F9FF"/>
+      <stop offset="1" stop-color="#D9E8FF"/>
+    </linearGradient>
+    <linearGradient id="wordPanel" x1="108" y1="198" x2="408" y2="484" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1F69D8"/>
+      <stop offset="1" stop-color="#0D3F99"/>
+    </linearGradient>
+    <linearGradient id="wordDesk" x1="150" y1="548" x2="370" y2="622" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#445064"/>
+      <stop offset="1" stop-color="#252E3A"/>
+    </linearGradient>
+  </defs>
+  <rect width="520" height="800" rx="28" fill="url(#wordBg)"/>
+  <circle cx="98" cy="116" r="24" fill="#BAD6FF" opacity="0.8"/>
+  <circle cx="426" cy="96" r="18" fill="#E3EEFF" opacity="0.9"/>
+  <rect x="112" y="196" width="296" height="280" rx="34" fill="url(#wordPanel)"/>
+  <rect x="136" y="224" width="248" height="220" rx="24" fill="#F8FBFF" opacity="0.96"/>
+  <rect x="172" y="272" width="176" height="16" rx="8" fill="#7EA6E8"/>
+  <rect x="172" y="304" width="154" height="14" rx="7" fill="#A8C4F0"/>
+  <rect x="172" y="332" width="168" height="14" rx="7" fill="#D1E0F7"/>
+  <rect x="172" y="360" width="132" height="14" rx="7" fill="#BBD1F2"/>
+  <rect x="172" y="388" width="146" height="14" rx="7" fill="#D7E5FA"/>
+  <path d="M108 254L164 236V432L108 414V254Z" fill="#0F4EB8"/>
+  <path d="M126 292L140 370L154 320L168 370L182 292" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -3,6 +3,14 @@ let acertos = 0;
 let isMuted = false;
 let questaoAtualProcessada = null; 
 
+try {
+    if (typeof Neutralino !== 'undefined') {
+        Neutralino.init();
+    }
+} catch (e) {
+    console.error('[TESTE] Neutralino não inicializado:', e);
+}
+
 // CONFIGURAÇÃO: IDs das aulas que entrarão no sorteio do Teste Final
 const aulasParaSorteio = ['A1', 'A2', 'A3', 'A4', 'A5']; 
 
@@ -20,6 +28,26 @@ const btnContinuar = document.getElementById('btn-avancar');
 const audioEl = document.getElementById('main-audio');
 const imgEl = document.getElementById('img-pergunta');
 const progressText = document.getElementById('progress-text');
+let finalizacaoEmAndamento = false;
+
+async function encerrarParaNovoLogin() {
+    try {
+        if (typeof Neutralino !== 'undefined' && Neutralino.app && typeof Neutralino.app.exit === 'function') {
+            await Neutralino.app.exit();
+            return;
+        }
+    } catch (err) {
+        console.error('[TESTE] Falha ao encerrar app via Neutralino:', err);
+    }
+
+    try {
+        window.close();
+    } catch (err) {
+        console.error('[TESTE] Falha ao fechar janela:', err);
+    }
+
+    window.location.href = 'about:blank';
+}
 
 // 1. INICIALIZAÇÃO E DETECÇÃO DE MODO (AULA VS TESTE FINAL)
 window.addEventListener('load', async () => {
@@ -181,11 +209,20 @@ function finalizarTeste() {
     btnContinuar.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>';
     
     btnContinuar.onclick = async () => {
+        if (finalizacaoEmAndamento) return;
+        finalizacaoEmAndamento = true;
+        btnContinuar.disabled = true;
+        progressText.innerText = 'Concluindo...';
+
         console.log("[TESTE] Enviando resultado do teste para o servidor...");
         try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 8000);
+
             const resposta = await fetch('http://localhost:3000/api/teste/concluir', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                signal: controller.signal,
                 body: JSON.stringify({
                     id_aluno: idAlunoURL,
                     cod_curso: codCursoURL,
@@ -198,18 +235,26 @@ function finalizarTeste() {
                     aprovado: aprovado
                 })
             });
+            clearTimeout(timeoutId);
 
             if (!resposta.ok) {
-                console.error("[ERRO] Servidor recusou a gravação.");
-            } else {
-                const dados = await resposta.json();
-                console.log('[TESTE] Resposta do servidor:', dados);
+                throw new Error(`Servidor recusou a gravação (HTTP ${resposta.status}).`);
             }
+
+            const dados = await resposta.json();
+            if (!dados || dados.sucesso !== true) {
+                throw new Error(dados?.erro || 'Servidor não confirmou a gravação.');
+            }
+
+            console.log('[TESTE] Resposta do servidor:', dados);
+            await encerrarParaNovoLogin();
         } catch (err) {
             console.error("[ERRO] Falha de rede ao enviar:", err);
+            finalizacaoEmAndamento = false;
+            btnContinuar.disabled = false;
+            progressText.innerText = 'Concluído';
+            alert('Não foi possível concluir o teste agora. Verifique o servidor e tente novamente.');
         }
-
-        window.location.href = "mg.html";
     };
     
     btnContinuar.style.display = 'flex';

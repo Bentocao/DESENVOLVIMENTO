@@ -185,6 +185,14 @@ body {
     display: flex; 
     align-items: center; 
     justify-content: center; 
+    overflow: hidden;
+}
+
+.card-imagem img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 .card-info { 
@@ -193,6 +201,7 @@ body {
     display: flex; 
     flex-direction: column; 
     justify-content: center; 
+    gap: 8px;
 }
 
 .curso-titulo { 
@@ -201,6 +210,61 @@ body {
     color: #333; 
     line-height: 1.2; 
     margin-bottom: 5px; 
+}
+
+.info-detalhes {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 0.85em;
+    color: #666;
+}
+
+.status-texto {
+    font-weight: 700;
+}
+
+.status-texto.status-ativo {
+    color: #0078d7;
+}
+
+.status-texto.status-pendente {
+    color: #666;
+}
+
+.status-texto.status-concluido {
+    color: #218838;
+}
+
+.status-texto.status-trancado {
+    color: #b02a37;
+}
+
+.btn-card-curso {
+    align-self: flex-start;
+    background: transparent;
+    color: #111;
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn-card-curso svg {
+    width: 26px;
+    height: 26px;
+    fill: currentColor;
+}
+
+.btn-card-curso:hover {
+    background-color: rgba(0, 0, 0, 0.1);
 }
 
 .pag-item {
@@ -227,7 +291,18 @@ body {
 .status-ativo { border: 2px solid #0078d7; }
 .status-concluido { border-bottom: 4px solid #28a745; }
 .status-pendente { border: 1px solid #ddd; }
-.selo-ok { position: absolute; top: 10px; right: 10px; }
+.status-trancado { border-bottom: 4px solid #b02a37; }
+.selo-ok {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(33, 136, 56, 0.92);
+    color: #fff;
+    font-size: 0.75em;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 999px;
+}
 
 
 /* =========================================================
@@ -239,11 +314,12 @@ body {
 }
 
 .destaque-cabecalho {
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     padding-bottom: 20px;
     border-bottom: 1px solid #e1e4e8;
     text-align: left;
     padding-left: 10%;
+    padding-right: 10%;
 }
 
 .destaque-cabecalho h3 {
@@ -265,57 +341,10 @@ body {
 .destaque-subtitulo {
     color: #666;
     font-size: 1em;
-    margin-bottom: 5px;
-}
-
-.destaque-curso-titulo {
-    color: #0078d7;
-    margin-bottom: 25px;
-    font-size: 1.6em;
-}
-
-.destaque-progresso-container {
-    width: 80%;
-    margin: 0 auto 25px auto;
+    margin: 0;
+    padding: 0 10%;
+    line-height: 1.5;
     text-align: left;
-}
-
-.destaque-progresso-texto {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.85em;
-    color: #555;
-    margin-bottom: 8px;
-}
-
-.destaque-porcentagem {
-    font-weight: bold;
-    color: #28a745;
-}
-
-.destaque-barra-fundo {
-    width: 100%;
-    height: 10px;
-    background-color: #e1e4e8;
-    border-radius: 5px;
-    overflow: hidden;
-}
-
-.destaque-barra-preenchimento {
-    height: 100%;
-    background-color: #28a745;
-}
-
-/* Aproveita a classe .btn-login que você já tem, mas com regras específicas para o painel */
-.btn-acessar-curso {
-    background-color: #28a745;
-    width: 80%;
-    margin: 0 auto;
-    display: block;
-}
-
-.btn-acessar-curso:hover {
-    background-color: #218838; /* Um tom mais escuro para o hover ficar legal */
 }
 
 .msg-erro-acesso {
