@@ -5,6 +5,58 @@ let configCPW = { ip: '', unidade: '', erro: '' };
 let todosOsCursos = [];
 let paginaAtual = 1;
 const cursosPorPagina = 8;
+const caminhoImagensCursos = 'C:\\cursoscpw\\sistema\\img';
+
+function normalizarStatusCurso(status) {
+    return (status || 'Pendente').toString().trim().toLowerCase();
+}
+
+function obterRotuloStatusCurso(status) {
+    const statusNormalizado = normalizarStatusCurso(status);
+
+    if (statusNormalizado === 'ativo') return 'Ativo';
+    if (statusNormalizado === 'concluido') return 'Concluido';
+    if (statusNormalizado === 'trancado') return 'Trancado';
+    return 'Pendente';
+}
+
+function obterMarkupCapaCurso(curso) {
+    const nomeArquivo = `${curso.pasta || 'curso-padrao'}`;
+
+    return `<img data-curso-imagem="1" data-nome-arquivo="${nomeArquivo}" alt="Capa do curso ${curso.nome}" loading="lazy">`;
+}
+
+function svgParaDataUrl(conteudoSvg) {
+    return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(conteudoSvg)}`;
+}
+
+async function carregarCapaEmElemento(imgEl) {
+    const nomeArquivo = imgEl.dataset.nomeArquivo || 'curso-padrao';
+    const caminhos = [
+        `${caminhoImagensCursos}\\${nomeArquivo}.svg`,
+        `${caminhoImagensCursos}\\curso-padrao.svg`
+    ];
+
+    for (const caminho of caminhos) {
+        try {
+            const conteudoSvg = await Neutralino.filesystem.readFile(caminho);
+            imgEl.src = svgParaDataUrl(conteudoSvg);
+            imgEl.style.display = 'block';
+            return;
+        } catch (erro) {
+            console.log('[CAPA-DEBUG] Falha ao carregar capa:', caminho, erro?.message || erro);
+        }
+    }
+
+    imgEl.style.display = 'none';
+}
+
+async function carregarCapasCursosVisiveis() {
+    if (typeof Neutralino === 'undefined' || !Neutralino.filesystem) return;
+
+    const imagens = Array.from(document.querySelectorAll('img[data-curso-imagem="1"]'));
+    await Promise.all(imagens.map(imgEl => carregarCapaEmElemento(imgEl)));
+}
 
 // =================================================================
 // FUNÇÃO NUCLEAR DE FECHAMENTO (À PROVA DE FALHAS)
@@ -218,22 +270,30 @@ function renderizarPagina(pagina) {
     const fim = inicio + cursosPorPagina;
     const cursosDaPagina = todosOsCursos.slice(inicio, fim);
     cursosDaPagina.forEach(curso => {
+        const statusNormalizado = normalizarStatusCurso(curso.status);
+        const statusRotulo = obterRotuloStatusCurso(curso.status);
+        const botaoAcao = statusNormalizado === 'ativo'
+            ? `<button class="btn-card-curso" title="Acessar curso" aria-label="Acessar curso" onclick="event.stopPropagation(); abrirCurso('${curso.pasta}')"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.1-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.35-.75-2-1zm-1 12.4c-1.2-.35-2.6-.5-4-.5-1.95 0-4.05.4-5.5 1.5V7.5c1.45-1.1 3.55-1.5 5.5-1.5 1.4 0 2.8.15 4 .5v10.9z"/></svg></button>`
+            : '';
+
         const card = document.createElement('div');
-        card.className = `card-curso status-${(curso.status || 'pendente').toLowerCase()}`;
+        card.className = `card-curso status-${statusNormalizado}`;
         card.innerHTML = `
-            <div class="card-imagem" style="background-image: url('img/cursos/${curso.pasta}.png'); background-size: cover;">
-                ${curso.status === 'Concluido' ? '<span class="selo-ok">✅</span>' : ''}
+            <div class="card-imagem">
+                ${obterMarkupCapaCurso(curso)}
+                ${statusNormalizado === 'concluido' ? '<span class="selo-ok">Concluido</span>' : ''}
             </div>
             <div class="card-info">
                 <p class="curso-titulo">${curso.nome}</p>
                 <div class="info-detalhes">
                     <span class="curso-versao">Ver: ${curso.versao || '-'}</span>
-                    <span class="status-texto">${curso.status || 'Pendente'}</span>
+                    <span class="status-texto status-${statusNormalizado}">${statusRotulo}</span>
                 </div>
+                ${botaoAcao}
             </div>`;
-        card.onclick = () => { abrirCurso(curso.pasta); }; 
         gridCursos.appendChild(card);
     });
+    carregarCapasCursosVisiveis();
     renderizarControlesPaginacao();
 }
 
@@ -255,30 +315,15 @@ function renderizarControlesPaginacao() {
 
 function montarPainelLateral(dados, container) {
     if (!container) return;
-    let cursoDestaque = dados.cursos.find(c => c.status === 'Ativo') || dados.cursos[0];
-    if (!cursoDestaque) return;
-    const concluidos = dados.cursos.filter(c => c.status === 'Concluido').length;
-    const porcentagem = dados.cursos.length > 0 ? Math.round((concluidos / dados.cursos.length) * 100) : 0;
     const painelDestaque = document.createElement('div');
     painelDestaque.className = 'destaque-lateral'; 
     painelDestaque.innerHTML = `
         <div class="destaque-cabecalho">
             <h3>Olá, ${dados.nome}! 👋</h3>
-            <p>Pacote: <b>${dados.pacote}</b></p>
         </div>
-        <p class="destaque-subtitulo">Você está no curso de:</p>
-        <h2 class="destaque-curso-titulo">${cursoDestaque.nome}</h2>
-        <div class="destaque-progresso-container">
-            <div class="destaque-progresso-texto">
-                <span>Progresso</span>
-                <span class="destaque-porcentagem">${porcentagem}%</span>
-            </div>
-            <div class="destaque-barra-fundo">
-                <div class="destaque-barra-preenchimento" style="width: ${porcentagem}%;"></div>
-            </div>
-        </div>
-        <button class="btn-login btn-acessar-curso" onclick="abrirCurso('${cursoDestaque.pasta}')">Acessar Curso</button>
+        <p class="destaque-subtitulo">Escolha um curso disponivel ao lado para iniciar.</p>
         <div id="msg-erro-acesso" class="msg-erro-acesso"></div>`;
+    container.innerHTML = '<div class="sidebar-header"><h2>Portal do Aluno</h2></div>';
     container.appendChild(painelDestaque);
 }
 

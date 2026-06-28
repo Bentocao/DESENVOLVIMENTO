@@ -1,0 +1,13 @@
+<svg width="520" height="800" viewBox="0 0 520 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="fallbackBg" x1="64" y1="44" x2="438" y2="738" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8FAFC"/>
+      <stop offset="1" stop-color="#DCE6F0"/>
+    </linearGradient>
+  </defs>
+  <rect width="520" height="800" rx="28" fill="url(#fallbackBg)"/>
+  <rect x="96" y="214" width="328" height="280" rx="34" fill="#FFFFFF" opacity="0.72"/>
+  <rect x="118" y="238" width="284" height="232" rx="28" fill="#EAF1F7"/>
+  <rect x="146" y="268" width="228" height="172" rx="22" fill="#D6E0EA"/>
+  <rect x="170" y="458" width="180" height="12" rx="6" fill="#C2D0DE"/>
+</svg>
