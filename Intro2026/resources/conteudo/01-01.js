@@ -3,9 +3,15 @@
 const dadosAula = [
   {
     "img": "1.png",
-    "audio": "1.m4a",
-    "text": `<strong>Bem vindo ao curso de Windows 10</strong>`
+    "audio": "", 
+    "text": `Carregando simulação...`,
+    "interacao": "int1/intera-01-01.html"
   },
+  //{
+  //  "img": "1.png",
+  //  "audio": "1.m4a",
+  //  "text": `<strong>Bem vindo ao curso de Windows 10</strong>`
+  //},
   {
     "img": "2.png",
     "audio": "2.m4a",
@@ -125,7 +131,7 @@ const dadosAula = [
     "img": "25.png",
     "audio": "", 
     "text": `Carregando a simulação do Windows 10...`,
-    "interacao": "intera-01-01.html"
+    "interacao": "int2/intera-01-01.html"
   },
   {
     "img": "26.png",

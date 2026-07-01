@@ -202,6 +202,28 @@ body {
 .text-separator { opacity: 0.4; font-weight: normal; }
 #course-name { text-transform: uppercase; letter-spacing: 0.5px; }
 
+.right-logo {
+    margin-left: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 0 0 auto;
+}
+
+.bottom-logo-img {
+    height: 34px;
+    width: auto;
+    display: block;
+    opacity: 0.96;
+    pointer-events: none;
+}
+
+@media (max-width: 860px) {
+    .bottom-logo-img {
+        height: 28px;
+    }
+}
+
 
 
 /* =======================================================

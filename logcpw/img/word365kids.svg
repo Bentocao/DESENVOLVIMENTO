@@ -1,0 +1,52 @@
+<svg width="520" height="800" viewBox="0 0 520 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="58" y1="42" x2="446" y2="744" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F4FBFF"/>
+      <stop offset="1" stop-color="#D6EEFF"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="104" y1="184" x2="412" y2="520" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6CC8FF"/>
+      <stop offset="1" stop-color="#2F79FF"/>
+    </linearGradient>
+    <linearGradient id="card" x1="136" y1="222" x2="392" y2="440" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF" stop-opacity="0.94"/>
+      <stop offset="1" stop-color="#EAF5FF" stop-opacity="0.86"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="520" height="800" rx="28" fill="url(#bg)"/>
+  <circle cx="94" cy="108" r="24" fill="#FFE07E"/>
+  <circle cx="422" cy="96" r="18" fill="#FFB7D8"/>
+  <circle cx="396" cy="154" r="12" fill="#A8EAA8"/>
+
+  <path d="M76 180C92 160 122 160 138 180L148 192C156 202 170 206 182 202L196 198C220 190 244 214 238 238L234 252C231 264 238 276 250 279L264 282C288 288 292 322 272 334L258 342C248 348 244 362 252 372L260 384C274 406 248 430 224 420L208 414C196 410 182 416 178 428L174 444C168 468 136 474 122 454L112 440C104 430 90 428 78 436L64 446C44 460 16 440 22 416L26 400C29 388 22 376 10 372L0 368V240C6 238 12 236 18 232L32 224C42 218 46 204 40 194L34 184C30 178 30 170 34 164C46 150 64 150 76 180Z" fill="#FFF3BF" opacity="0.9"/>
+
+  <rect x="92" y="188" width="336" height="298" rx="38" fill="url(#panel)"/>
+  <rect x="124" y="220" width="272" height="220" rx="30" fill="url(#card)"/>
+
+  <rect x="174" y="268" width="174" height="16" rx="8" fill="#8AB9F5"/>
+  <rect x="174" y="300" width="154" height="14" rx="7" fill="#A8C9F4"/>
+  <rect x="174" y="328" width="168" height="14" rx="7" fill="#C6DCF8"/>
+  <rect x="174" y="356" width="134" height="14" rx="7" fill="#B8D2F6"/>
+  <rect x="174" y="384" width="148" height="14" rx="7" fill="#D6E6FA"/>
+
+  <path d="M108 252L164 236V432L108 416V252Z" fill="#0F57C7"/>
+  <path d="M126 292L140 370L154 320L168 370L182 292" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <g>
+    <rect x="126" y="506" width="72" height="72" rx="22" fill="#FFD964"/>
+    <path d="M148 542H176" stroke="#2A3240" stroke-width="10" stroke-linecap="round"/>
+    <path d="M162 528V556" stroke="#2A3240" stroke-width="10" stroke-linecap="round"/>
+
+    <rect x="224" y="520" width="72" height="58" rx="20" fill="#88E28C"/>
+    <circle cx="248" cy="549" r="9" fill="#FFFFFF"/>
+    <circle cx="272" cy="549" r="9" fill="#FFFFFF"/>
+
+    <rect x="322" y="506" width="72" height="72" rx="22" fill="#FF9AC0"/>
+    <path d="M344 528L372 556" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round"/>
+    <path d="M372 528L344 556" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round"/>
+  </g>
+
+  <rect x="122" y="600" width="276" height="40" rx="12" fill="#1155BC" fill-opacity="0.86"/>
+  <text x="260" y="627" text-anchor="middle" fill="#E9F5FF" font-size="24" font-family="Segoe UI, Arial, sans-serif" font-weight="700">WORD 365 KIDS</text>
+</svg>
