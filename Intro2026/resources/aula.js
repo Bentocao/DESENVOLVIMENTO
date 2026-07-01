@@ -161,15 +161,38 @@ function mostrarSlide() {
     }
 
     const imgEl = document.getElementById('main-img');
+    let videoEl = document.getElementById('main-video');
+    if (!videoEl && imgEl && imgEl.parentElement) {
+        videoEl = document.createElement('video');
+        videoEl.id = 'main-video';
+        videoEl.style.maxWidth = '900px';
+        videoEl.style.maxHeight = '90%';
+        videoEl.style.objectFit = 'contain';
+        videoEl.style.display = 'none';
+        videoEl.autoplay = true;
+        videoEl.muted = true;
+        videoEl.loop = true;
+        videoEl.playsInline = true;
+        videoEl.setAttribute('playsinline', '');
+        imgEl.parentElement.insertBefore(videoEl, imgEl.nextSibling);
+    }
     const iframeEl = document.getElementById('main-iframe');
     const textoTela = document.getElementById('main-text');
     const divisor = document.getElementById('divisor');
     const player = document.getElementById('player-audio');
+    const arquivoVisual = (slide.img || '').toLowerCase().split('?')[0].split('#')[0].trim();
+    const isVideoVisual = ['.mp4', '.webm', '.ogg', '.m4v'].some(ext => arquivoVisual.endsWith(ext));
 
     // --- GERENCIAMENTO VISUAL DE INTERAÇÃO/TEXTO ---
     if (slide.interacao) {
         document.body.classList.add('modo-interacao');
         if(imgEl) imgEl.style.display = 'none';
+        if(videoEl) {
+            videoEl.style.display = 'none';
+            videoEl.pause();
+            videoEl.removeAttribute('src');
+            videoEl.load();
+        }
         if(textoTela) textoTela.style.display = 'none';
         if(divisor) divisor.style.display = 'none';
         if(iframeEl) {
@@ -182,9 +205,29 @@ function mostrarSlide() {
             iframeEl.style.display = 'none';
             iframeEl.src = ''; 
         }
-        if(imgEl) {
-            imgEl.style.display = 'block';
-            imgEl.src = window.pathImgs + slide.img;
+        if(isVideoVisual) {
+            if(imgEl) {
+                imgEl.style.display = 'none';
+                imgEl.removeAttribute('src');
+            }
+            if(videoEl) {
+                videoEl.style.display = 'block';
+                videoEl.src = window.pathImgs + slide.img;
+                videoEl.play().catch(e => {
+                    console.warn("Video visual bloqueado pelo navegador:", e);
+                });
+            }
+        } else {
+            if(videoEl) {
+                videoEl.style.display = 'none';
+                videoEl.pause();
+                videoEl.removeAttribute('src');
+                videoEl.load();
+            }
+            if(imgEl) {
+                imgEl.style.display = 'block';
+                imgEl.src = window.pathImgs + slide.img;
+            }
         }
         if(textoTela) {
             textoTela.style.display = 'block';

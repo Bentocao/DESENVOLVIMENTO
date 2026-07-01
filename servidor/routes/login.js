@@ -13,6 +13,7 @@ router.get('/aluno/:usuario', (req, res) => {
             p.nome AS pacote_nome, p.cod_pacote AS id_pacote,
             c.cod_curso AS cod_curso, c.nome AS curso_nome, c.pasta AS curso_pasta,
             c.versao AS curso_versao, c.perfil AS curso_perfil,
+            pc.ordem AS ordem_pacote,
             m.status, m.data_inicio, m.data_fim,
             t.id AS id_tela_aula, t.aula, t.topico, t.frame
         FROM aluno a
@@ -23,7 +24,7 @@ router.get('/aluno/:usuario', (req, res) => {
         INNER JOIN pacote_curso pc ON (p.cod_pacote = pc.cod_pacote AND c.cod_curso = pc.cod_curso)
         LEFT JOIN tela_aula t ON (a.id = t.id_aluno AND c.cod_curso = t.cod_curso)
         WHERE a.usuario = ? AND m.ativo = 1
-        ORDER BY pc.ordem ASC
+        ORDER BY p.cod_pacote ASC, pc.ordem ASC, c.cod_curso ASC
     `;
 
     db.query(sql, [usuario], (err, results) => {
@@ -52,6 +53,9 @@ router.get('/aluno/:usuario', (req, res) => {
             pasta: linha.curso_pasta,
             versao: linha.curso_versao,
             perfil: linha.curso_perfil,
+            id_pacote: linha.id_pacote,
+            pacote_nome: linha.pacote_nome,
+            ordem_pacote: linha.ordem_pacote,
             status: linha.status,
             inicio: linha.data_inicio,
             fim: linha.data_fim,
