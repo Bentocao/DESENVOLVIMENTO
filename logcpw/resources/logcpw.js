@@ -3,6 +3,8 @@
 // =================================================================
 let configCPW = { ip: '', unidade: '', erro: '' }; 
 let todosOsCursos = [];
+let cursoPacoteSelecionado = 'todos';
+let cursoStatusSelecionado = 'ativo';
 let paginaAtual = 1;
 const cursosPorPagina = 8;
 const caminhoImagensCursos = 'C:\\cursoscpw\\sistema\\img';
@@ -18,6 +20,121 @@ function obterRotuloStatusCurso(status) {
     if (statusNormalizado === 'concluido') return 'Concluido';
     if (statusNormalizado === 'trancado') return 'Trancado';
     return 'Pendente';
+}
+
+function normalizarPacoteCurso(curso) {
+    const idPacote = Number(curso.id_pacote || curso.cod_pacote || 0);
+    return Number.isFinite(idPacote) ? idPacote : 0;
+}
+
+function obterPacotesDisponiveis() {
+    const pacotes = new Map();
+
+    todosOsCursos.forEach(curso => {
+        const idPacote = normalizarPacoteCurso(curso);
+        if (!idPacote || pacotes.has(idPacote)) return;
+
+        pacotes.set(idPacote, {
+            id: idPacote,
+            nome: curso.pacote_nome || `Pacote ${idPacote}`
+        });
+    });
+
+    return Array.from(pacotes.values()).sort((a, b) => a.id - b.id);
+}
+
+function ordenarCursosVisiveis(listaCursos) {
+    return listaCursos.slice().sort((a, b) => {
+        const pacoteA = normalizarPacoteCurso(a);
+        const pacoteB = normalizarPacoteCurso(b);
+
+        if (pacoteA !== pacoteB) return pacoteA - pacoteB;
+
+        const ordemA = Number(a.ordem_pacote || a.ordem || 0) || 0;
+        const ordemB = Number(b.ordem_pacote || b.ordem || 0) || 0;
+        if (ordemA !== ordemB) return ordemA - ordemB;
+
+        const nomeComparado = String(a.nome || '').localeCompare(String(b.nome || ''), 'pt-BR', { sensitivity: 'base' });
+        if (nomeComparado !== 0) return nomeComparado;
+
+        return Number(a.cod_curso || 0) - Number(b.cod_curso || 0);
+    });
+}
+
+function obterCursosFiltrados() {
+    let lista = todosOsCursos.slice();
+
+    if (cursoPacoteSelecionado !== 'todos') {
+        const pacoteSelecionado = Number(cursoPacoteSelecionado) || 0;
+        lista = lista.filter(curso => normalizarPacoteCurso(curso) === pacoteSelecionado);
+    }
+
+    if (cursoStatusSelecionado !== 'todos') {
+        lista = lista.filter(curso => normalizarStatusCurso(curso.status) === cursoStatusSelecionado);
+    }
+
+    return ordenarCursosVisiveis(lista);
+}
+
+function atualizarListaCursos() {
+    paginaAtual = 1;
+    renderizarPagina(1);
+}
+
+function renderizarFiltrosCursos(container) {
+    if (!container) return;
+
+    const pacotes = obterPacotesDisponiveis();
+
+    container.innerHTML = `
+        <div class="filtros-cabecalho">
+            <h3>Filtros</h3>
+            <p>Filtre por pacote e por status do curso.</p>
+        </div>
+        <label class="grupo-filtro" for="filtro-pacote">
+            <span>Pacote</span>
+            <select id="filtro-pacote">
+                <option value="todos">Sem filtro</option>
+                ${pacotes.map(pacote => `<option value="${pacote.id}">${pacote.nome}</option>`).join('')}
+            </select>
+        </label>
+        <label class="grupo-filtro" for="filtro-status">
+            <span>Status</span>
+            <select id="filtro-status">
+                <option value="ativo">Ativo</option>
+                <option value="pendente">Pendente</option>
+                <option value="concluido">Concluido</option>
+                <option value="trancado">Trancado</option>
+                <option value="todos">Todos</option>
+            </select>
+        </label>
+        <button type="button" class="btn-limpar-filtros">Limpar filtros</button>
+    `;
+
+    const selectPacote = container.querySelector('#filtro-pacote');
+    const selectStatus = container.querySelector('#filtro-status');
+    const botaoLimpar = container.querySelector('.btn-limpar-filtros');
+
+    if (selectPacote) selectPacote.value = cursoPacoteSelecionado;
+    if (selectStatus) selectStatus.value = cursoStatusSelecionado;
+
+    const aplicarFiltros = () => {
+        cursoPacoteSelecionado = selectPacote ? selectPacote.value : 'todos';
+        cursoStatusSelecionado = selectStatus ? selectStatus.value : 'ativo';
+        atualizarListaCursos();
+    };
+
+    if (selectPacote) selectPacote.onchange = aplicarFiltros;
+    if (selectStatus) selectStatus.onchange = aplicarFiltros;
+    if (botaoLimpar) {
+        botaoLimpar.onclick = () => {
+            cursoPacoteSelecionado = 'todos';
+            cursoStatusSelecionado = 'ativo';
+            if (selectPacote) selectPacote.value = cursoPacoteSelecionado;
+            if (selectStatus) selectStatus.value = cursoStatusSelecionado;
+            atualizarListaCursos();
+        };
+    }
 }
 
 function obterMarkupCapaCurso(curso) {
@@ -202,6 +319,7 @@ async function fazerLogin() {
     
     const loginContainer = document.getElementById('login-container');
     const dashboard = document.getElementById('dashboard-aluno');
+    const boasVindas = document.getElementById('boas-vindas-inicial');
     const painelLogin = document.getElementById('painel-login');
 
     if (!user || !pass) {
@@ -235,12 +353,14 @@ async function fazerLogin() {
                 console.log('[PERFIL-DEBUG] Cursos recebidos do login:', todosOsCursos.map(c => ({
                     pasta: c.pasta,
                     cod_curso: c.cod_curso,
+                    id_pacote: c.id_pacote,
                     versao: c.versao,
                     perfil: c.perfil,
                     status: c.status
                 })));
                 
                 loginContainer.style.display = 'none'; 
+                if (boasVindas) boasVindas.style.display = 'none';
                 dashboard.classList.remove('dashboard-oculto');
                 dashboard.classList.add('dashboard-visivel');
 
@@ -266,9 +386,29 @@ function renderizarPagina(pagina) {
     const gridCursos = document.getElementById('grid-cursos');
     if (!gridCursos) return;
     gridCursos.innerHTML = ""; 
-    const inicio = (pagina - 1) * cursosPorPagina;
+    const cursosFiltrados = obterCursosFiltrados();
+    const totalPaginas = Math.ceil(cursosFiltrados.length / cursosPorPagina);
+    if (totalPaginas > 0 && paginaAtual > totalPaginas) {
+        paginaAtual = totalPaginas;
+    }
+    const inicio = (paginaAtual - 1) * cursosPorPagina;
     const fim = inicio + cursosPorPagina;
-    const cursosDaPagina = todosOsCursos.slice(inicio, fim);
+    const cursosDaPagina = cursosFiltrados.slice(inicio, fim);
+
+    if (cursosDaPagina.length === 0) {
+        const estadoVazio = document.createElement('div');
+        estadoVazio.className = 'card-curso card-vazio';
+        estadoVazio.style.gridColumn = '1 / -1';
+        estadoVazio.innerHTML = `
+            <div class="card-info card-vazio-conteudo">
+                <p class="curso-titulo">Nenhum curso encontrado</p>
+                <p class="curso-vazio-texto">Ajuste os filtros da esquerda para visualizar os cursos contratados.</p>
+            </div>
+        `;
+        gridCursos.appendChild(estadoVazio);
+        renderizarControlesPaginacao(cursosFiltrados);
+        return;
+    }
     cursosDaPagina.forEach(curso => {
         const statusNormalizado = normalizarStatusCurso(curso.status);
         const statusRotulo = obterRotuloStatusCurso(curso.status);
@@ -294,14 +434,14 @@ function renderizarPagina(pagina) {
         gridCursos.appendChild(card);
     });
     carregarCapasCursosVisiveis();
-    renderizarControlesPaginacao();
+    renderizarControlesPaginacao(cursosFiltrados);
 }
 
-function renderizarControlesPaginacao() {
+function renderizarControlesPaginacao(listaCursos = obterCursosFiltrados()) {
     const container = document.getElementById('controles-paginacao');
     if (!container) return;
     container.innerHTML = "";
-    const totalPaginas = Math.ceil(todosOsCursos.length / cursosPorPagina);
+    const totalPaginas = Math.ceil(listaCursos.length / cursosPorPagina);
     if (totalPaginas > 1) {
         for (let i = 1; i <= totalPaginas; i++) {
             const botao = document.createElement('div');
@@ -321,10 +461,15 @@ function montarPainelLateral(dados, container) {
         <div class="destaque-cabecalho">
             <h3>Olá, ${dados.nome}! 👋</h3>
         </div>
+        <div class="filtros-cursos" id="filtros-cursos"></div>
         <p class="destaque-subtitulo">Escolha um curso disponivel ao lado para iniciar.</p>
-        <div id="msg-erro-acesso" class="msg-erro-acesso"></div>`;
+        <div id="msg-erro-acesso" class="msg-erro-acesso"></div>
+        <div class="logo-painel-esquerdo-wrap">
+            <img src="imgs/logo-cpw-painel-esquerdo.svg" alt="CPW" class="logo-painel-esquerdo">
+        </div>`;
     container.innerHTML = '<div class="sidebar-header"><h2>Portal do Aluno</h2></div>';
     container.appendChild(painelDestaque);
+    renderizarFiltrosCursos(document.getElementById('filtros-cursos'));
 }
 
 // =========================================================

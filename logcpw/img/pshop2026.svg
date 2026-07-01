@@ -1,0 +1,39 @@
+<svg width="520" height="800" viewBox="0 0 520 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="60" y1="42" x2="448" y2="744" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EAF6FF"/>
+      <stop offset="1" stop-color="#B8E0FF"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="98" y1="154" x2="422" y2="654" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#041B3A"/>
+      <stop offset="1" stop-color="#020A16"/>
+    </linearGradient>
+    <linearGradient id="stroke" x1="118" y1="248" x2="398" y2="560" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#71C6FF"/>
+      <stop offset="1" stop-color="#0287D6"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="520" height="800" rx="28" fill="url(#bg)"/>
+  <rect x="34" y="36" width="452" height="728" rx="30" fill="#DDF0FF"/>
+
+  <circle cx="120" cy="150" r="48" fill="#C9E9FF"/>
+  <circle cx="406" cy="118" r="40" fill="#B8E1FF"/>
+  <circle cx="400" cy="650" r="60" fill="#B9E3FF"/>
+
+  <rect x="88" y="156" width="344" height="500" rx="28" fill="url(#panel)"/>
+  <rect x="108" y="176" width="304" height="460" rx="22" fill="#07264F"/>
+
+  <rect x="126" y="220" width="268" height="338" rx="18" fill="#0A315F"/>
+  <g fill="none" stroke="url(#stroke)" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M182 496V282H258C290 282 314 304 314 334C314 364 290 386 258 386H224" stroke-width="24"/>
+    <path d="M304 494C286 494 271 487 260 475" stroke-width="20"/>
+    <path d="M260 475C248 463 242 447 242 428" stroke-width="20"/>
+    <path d="M242 428C242 404 252 385 270 374" stroke-width="20"/>
+    <path d="M270 374C282 367 297 364 312 364" stroke-width="20"/>
+    <path d="M312 364C329 364 345 368 359 377" stroke-width="20"/>
+  </g>
+
+  <rect x="126" y="580" width="268" height="40" rx="12" fill="#123D71"/>
+  <text x="260" y="607" text-anchor="middle" fill="#A9DBFF" font-size="26" font-family="Segoe UI, Arial, sans-serif" font-weight="700">PHOTOSHOP 2026</text>
+</svg>

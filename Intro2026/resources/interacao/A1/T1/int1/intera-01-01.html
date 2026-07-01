@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introducao do Curso</title>
+    <link rel="stylesheet" href="css/interacao.css">
+</head>
+<body>
+<script>
+    const VIDEO_SRC = "imgs/1.mp4";
+    const FALLBACK_MS = 12000;
+
+    const video = document.createElement("video");
+    video.id = "video-intro";
+    video.src = VIDEO_SRC;
+    video.autoplay = true;
+    video.playsInline = true;
+    video.setAttribute("playsinline", "");
+    video.controls = false;
+    video.preload = "auto";
+    document.body.appendChild(video);
+
+    function avancarParaProximoSlide() {
+        const params = new URLSearchParams(window.location.search);
+        const slideOrigem = parseInt(params.get("slide"), 10) || 0;
+        const proximoSlide = slideOrigem + 1;
+
+        console.log("[INT1] Video encerrado. Avancando para o slide:", proximoSlide);
+
+        if (window.parent && typeof window.parent.avancarSlidePelaInteracao === "function") {
+            window.parent.avancarSlidePelaInteracao(proximoSlide);
+        } else {
+            console.error("[INT1] Funcao avancarSlidePelaInteracao nao encontrada na janela pai.");
+        }
+    }
+
+    let jaAvancou = false;
+    function avancarUmaVez() {
+        if (jaAvancou) return;
+        jaAvancou = true;
+        avancarParaProximoSlide();
+    }
+
+    // Tenta iniciar com audio; se o navegador bloquear autoplay com som, re-tenta mutado.
+    video.play().catch(() => {
+        video.muted = true;
+        video.play().catch((err) => {
+            console.error("[INT1] Falha ao iniciar o video:", err);
+            avancarUmaVez();
+        });
+    });
+
+    video.addEventListener("ended", avancarUmaVez);
+    video.addEventListener("error", () => {
+        console.error("[INT1] Erro no carregamento do video.");
+        avancarUmaVez();
+    });
+
+    // Fallback para evitar travamento caso o evento ended nao dispare.
+    setTimeout(avancarUmaVez, FALLBACK_MS);
+</script>
+</body>
+</html>
